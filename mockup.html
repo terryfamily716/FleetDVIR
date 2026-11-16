@@ -14,6 +14,16 @@
   .footer { color: #666; font-size: 12px; text-align: center; margin-top: 24px; }
   .badge { background: #e74c3c; color: #fff; border-radius: 10px; padding: 2px 8px; font-size: 12px; margin-left: 6px; }
   .admin-btn { background: #333; }
+  label { display: block; color: #999; font-size: 13px; margin-bottom: 4px; }
+  input[type="text"], input[type="number"] { width: 100%; padding: 12px; border: none; border-radius: 8px; background: #333; color: #fff; font-size: 16px; margin-bottom: 16px; box-sizing: border-box; }
+  .section-title { font-size: 16px; font-weight: 600; margin: 20px 0 10px; color: #fff; }
+  .checklist { color: #ccc; font-size: 14px; line-height: 2; padding-left: 18px; }
+  .status-row { display: flex; gap: 10px; margin-bottom: 16px; }
+  .status-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .green { background: #2ecc71; color: #fff; }
+  .red { background: #e74c3c; color: #fff; }
+  .sig-line { border-bottom: 1px solid #555; height: 40px; margin-bottom: 16px; }
+  .sig-label { color: #999; font-size: 12px; margin-bottom: 4px; }
 </style>
 </head>
 <body>
@@ -34,6 +44,36 @@
     <h1 style="font-size: 20px;">Driver Dashboard</h1>
     <button class="btn">Create DVIR <span class="badge">2</span></button>
     <button class="btn">Chat <span class="badge">1</span></button>
+  </div>
+  <div class="card" style="margin-top: 20px;">
+    <h1 style="font-size: 20px;">Post-Trip DVIR</h1>
+    <label>Tractor Number</label>
+    <input type="text" value="T-1042">
+    <label>Trailer Number</label>
+    <input type="text" value="TR-88">
+    <label>Odometer / Mileage</label>
+    <input type="number" value="184732">
+    <div class="section-title">DOT Defect Checklist</div>
+    <ul class="checklist">
+      <li>Brakes</li>
+      <li>Steering</li>
+      <li>Tires</li>
+      <li>Lights</li>
+      <li>Coupling devices</li>
+      <li>Wheels and rims</li>
+      <li>Emergency equipment</li>
+    </ul>
+    <div class="section-title">Status</div>
+    <div class="status-row">
+      <button class="status-btn green">No Defects Found</button>
+      <button class="status-btn red">Defects Found</button>
+    </div>
+    <div class="section-title">Body Damage Photos</div>
+    <button class="btn" style="background:#333;">Take Photo</button>
+    <div class="section-title">Driver Signature</div>
+    <div class="sig-label">Sign below</div>
+    <div class="sig-line"></div>
+    <button class="btn">Submit DVIR</button>
   </div>
 </body>
 </html>
