@@ -1,0 +1,39 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Selfie photos: driver can upload one image (5MB max) to their own folder only
+    match /users/{driverId}/selfies/{fileName} {
+      allow read: if request.auth != null
+        && (request.auth.uid == driverId
+            || get(/databases/default/documents/drivers/$(request.auth.uid)).data.badgeStatus == 'approved'
+               && get(/databases/default/documents/drivers/$(request.auth.uid)).data.role in ['supervisor', 'shop', 'admin']);
+      allow write: if request.auth != null
+        && request.auth.uid == driverId
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*')
+        && resource == null; // one file only, no overwrite
+      allow delete: if false;
+    }
+
+    // Body damage photos: driver can upload to a DVIR they created while still in draft
+    match /dvirs/{dvirId}/body-damage/{fileName} {
+      allow read: if request.auth != null
+        && get(/databases/default/documents/drivers/$(request.auth.uid)).data.badgeStatus == 'approved';
+      allow write: if request.auth != null
+        && get(/databases/default/documents/drivers/$(request.auth.uid)).data.badgeStatus == 'approved'
+        && get(/databases/default/documents/dvirs/$(dvirId)).data.driverId == request.auth.uid
+        && get(/databases/default/documents/dvirs/$(dvirId)).data.status == 'draft'
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null
+        && get(/databases/default/documents/drivers/$(request.auth.uid)).data.badgeStatus == 'approved'
+        && get(/databases/default/documents/dvirs/$(dvirId)).data.driverId == request.auth.uid
+        && get(/databases/default/documents/dvirs/$(dvirId)).data.status == 'draft';
+    }
+
+    // Everything else denied
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
