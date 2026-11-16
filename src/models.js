@@ -4,13 +4,13 @@
 
 // ============================================================
 // COLLECTION: drivers
-// Drivers self-create profiles. Passcode routes to admin (Larry)
-// for badge approval before they can access anything.
+// Drivers self-create profiles. Selfie uploaded for visual
+// verification before admin (Larry) issues badge manually.
+// Sign-in is email/password via Firebase Auth only.
 // ============================================================
 export const Driver = {
   firstName: '',        // string, required
   lastName: '',         // string, required
-  passcode: '',         // 4-digit string, required, sent to admin for approval
   selfieUrl: '',        // string (Firebase Storage URL), required before DVIR submission
   badgeStatus: 'pending', // 'pending' | 'approved' | 'denied'
   role: 'driver',       // 'driver' | 'supervisor' | 'shop' | 'admin' (Larry only)
@@ -57,6 +57,7 @@ export const DVIR = {
   driverSignatureUrl: '',    // string (Firebase Storage URL)
   bodyDamagePhotos: [],      // array of photo URLs, as many as needed
   createdAt: null,           // timestamp
+  retentionExpiresAt: null,  // timestamp, 90 days from createdAt (FMCSA 49 CFR 396.11 minimum)
 }
 
 // ============================================================
@@ -120,7 +121,11 @@ export const ChatGroup = {
 
 // ============================================================
 // RETENTION
-// All data stored for 30 days.
+// All data stored for 90 days minimum, matching FMCSA
+// requirement under 49 CFR 396.11(a)(4): DVIR, repair
+// certification, and next-driver review must be retained
+// three months from the date the report was prepared.
+// Industry best practice is 12-24 months for audit defense.
 // ============================================================
 
 // ============================================================
