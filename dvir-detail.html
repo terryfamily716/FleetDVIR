@@ -10,6 +10,10 @@
   .header { background: #1a1f2e; padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #2d3748; }
   .back { color: #60a5fa; font-size: 20px; text-decoration: none; }
   .header h1 { font-size: 18px; color: #3b82f6; }
+  .trip-toggle { display: flex; gap: 0; margin: 16px 20px; border-radius: 12px; overflow: hidden; border: 2px solid #2d3748; }
+  .trip-btn { flex: 1; padding: 14px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; background: #1a1f2e; color: #9ca3af; }
+  .trip-btn.active-pre { background: #14532d; color: #4ade80; }
+  .trip-btn.active-post { background: #1e3a5f; color: #60a5fa; }
   .card { background: #1a1f2e; border-radius: 12px; padding: 16px; margin: 16px 20px; }
   .card h2 { font-size: 14px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
   .field { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #2d3748; font-size: 15px; }
@@ -38,6 +42,10 @@
   <div class="header">
     <a class="back" href="dashboard.html">&#8592;</a>
     <h1>DVIR - Tractor 9021</h1>
+  </div>
+  <div class="trip-toggle">
+    <button class="trip-btn active-pre">Pre-Trip</button>
+    <button class="trip-btn">Post-Trip</button>
   </div>
   <div class="oos-banner">&#9888; OUT OF SERVICE - Brake air leak</div>
   <div class="card">
