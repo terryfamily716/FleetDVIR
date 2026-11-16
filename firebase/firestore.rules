@@ -1,0 +1,45 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /drivers/{driverId} {
+      allow create: if request.auth != null
+        && request.auth.uid == driverId
+        && request.resource.data.keys().hasOnly(['firstName', 'lastName', 'selfieUrl', 'createdAt', 'badgeStatus', 'role'])
+        && request.resource.data.badgeStatus == 'pending'
+        && request.resource.data.role == 'driver';
+      allow read: if request.auth != null
+        && request.auth.uid == driverId;
+      allow read: if request.auth != null
+        && existsAfter(/databases/$(database)/documents/drivers/$(request.auth.uid))
+        && getAfter(/databases/$(database)/documents/drivers/$(request.auth.uid)).data.badgeStatus == 'approved';
+      allow update, delete: if false;
+    }
+    match /drivers/{driverId} {
+      allow read, update: if request.auth != null
+        && request.auth.token.admin == true;
+    }
+    match /dvirs/{dvirId} {
+      allow create: if request.auth != null
+        && existsAfter(/databases/$(database)/documents/drivers/$(request.auth.uid))
+        && getAfter(/databases/$(database)/documents/drivers/$(request.auth.uid)).data.badgeStatus == 'approved'
+        && request.resource.data.driverId == request.auth.uid
+        && request.resource.data.status == 'draft';
+      allow read: if request.auth != null
+        && existsAfter(/databases/$(database)/documents/drivers/$(request.auth.uid))
+        && getAfter(/databases/$(database)/documents/drivers/$(request.auth.uid)).data.badgeStatus == 'approved';
+    }
+    match /dvirs/{dvirId}/defects/{defectId} {
+      allow create, read: if request.auth != null
+        && existsAfter(/databases/$(database)/documents/drivers/$(request.auth.uid))
+        && getAfter(/databases/$(database)/documents/drivers/$(request.auth.uid)).data.badgeStatus == 'approved';
+      allow update: if request.auth != null
+        && request.auth.token.role in ['shop', 'admin'];
+    }
+    match /chat/{groupId}/messages/{messageId} {
+      allow create, read: if request.auth != null
+        && existsAfter(/databases/$(database)/documents/drivers/$(request.auth.uid))
+        && getAfter(/databases/$(database)/documents/drivers/$(request.auth.uid)).data.badgeStatus == 'approved'
+        && request.auth.uid in resource.data.groupMembers;
+    }
+  }
+}
