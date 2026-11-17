@@ -1,57 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FleetDVIR - Post-Trip</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FleetDVIR - Post-Trip Inspection</title>
 <style>
-  body { font-family: system-ui, -apple-system, sans-serif; background: #111; color: #fff; margin: 0; padding: 20px; }
-  .card { background: #222; border-radius: 12px; padding: 24px; max-width: 420px; margin: 0 auto; }
-  h1 { font-size: 24px; margin: 0 0 20px; }
-  label { display: block; color: #999; font-size: 13px; margin-bottom: 4px; }
-  input[type="text"], input[type="number"] { width: 100%; padding: 12px; border: none; border-radius: 8px; background: #333; color: #fff; font-size: 16px; margin-bottom: 16px; box-sizing: border-box; }
-  .section-title { font-size: 16px; font-weight: 600; margin: 20px 0 10px; color: #fff; }
-  .checklist { color: #ccc; font-size: 14px; line-height: 2; padding-left: 18px; }
-  .status-row { display: flex; gap: 10px; margin-bottom: 16px; }
-  .status-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
-  .green { background: #2ecc71; color: #fff; }
-  .red { background: #e74c3c; color: #fff; }
-  .sig-line { border-bottom: 1px solid #555; height: 40px; margin-bottom: 16px; }
-  .sig-label { color: #999; font-size: 12px; margin-bottom: 4px; }
-  .back { color: #007aff; font-size: 14px; margin-bottom: 16px; display: block; text-decoration: none; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  body { background: #0f1117; color: #e6e6e6; min-height: 100vh; padding: 16px; }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .header h1 { font-size: 20px; color: #4da3ff; }
+  .badge { background: #ef4444; color: white; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+  .tabs { display: flex; border-bottom: 2px solid #2a2d35; margin-bottom: 16px; }
+  .tab { flex: 1; text-align: center; padding: 12px; font-size: 16px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; }
+  .tab.pre { color: #22c55e; }
+  .tab.post { color: #4da3ff; border-bottom-color: #4da3ff; }
+  .oos-banner { background: #dc2626; color: white; text-align: center; padding: 14px; border-radius: 8px; font-weight: 700; font-size: 15px; margin-bottom: 16px; letter-spacing: 0.5px; }
+  .card { background: #1a1d24; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+  .card h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #8b8fa3; margin-bottom: 12px; }
+  .field { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #2a2d35; font-size: 14px; }
+  .field:last-child { border-bottom: none; }
+  .field .label { color: #8b8fa3; }
+  .checklist { list-style: none; }
+  .checklist li { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #2a2d35; font-size: 14px; }
+  .checklist li:last-child { border-bottom: none; }
+  .check { color: #22c55e; font-size: 18px; }
+  .x-mark { color: #ef4444; font-size: 18px; font-weight: bold; }
+  .oos-item { color: #ef4444; font-weight: 600; }
+  .status-row { display: flex; gap: 12px; margin-bottom: 16px; }
+  .status-btn { flex: 1; padding: 14px; border-radius: 8px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .status-btn.green { background: #22c55e; color: white; }
+  .status-btn.red { background: #ef4444; color: white; }
+  .photo-area { border: 2px dashed #3a3d45; border-radius: 8px; padding: 24px; text-align: center; color: #8b8fa3; font-size: 14px; margin-bottom: 16px; }
+  .photo-area span { display: block; margin-top: 8px; font-size: 12px; }
+  .sig-line { border-bottom: 1px solid #3a3d45; height: 40px; margin-bottom: 8px; display: flex; align-items: flex-end; padding-bottom: 4px; font-size: 12px; color: #8b8fa3; }
+  .sig-label { margin-bottom: 12px; font-size: 13px; color: #8b8fa3; }
+  .footer-note { font-size: 11px; color: #5a5d6b; text-align: center; margin-top: 20px; line-height: 1.5; }
 </style>
 </head>
 <body>
+  <div class="header">
+    <h1>FleetDVIR</h1>
+    <div><span class="badge">2</span></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab pre">Pre</div>
+    <div class="tab post">Post</div>
+  </div>
+
+  <div class="oos-banner">&#9888; OUT OF SERVICE — Brake Line Leak</div>
+
   <div class="card">
-    <a class="back" href="mockup.html">&larr; Back to Dashboard</a>
-    <h1>Post-Trip DVIR</h1>
-    <label>Tractor Number</label>
-    <input type="text" value="T-1042">
-    <label>Trailer Number</label>
-    <input type="text" value="TR-88">
-    <label>Odometer / Mileage</label>
-    <input type="number" value="184732">
-    <div class="section-title">DOT Defect Checklist</div>
+    <h2>Trip Info</h2>
+    <div class="field"><span class="label">Driver</span><span>Larry Terry</span></div>
+    <div class="field"><span class="label">Tractor #</span><span>T-1042</span></div>
+    <div class="field"><span class="label">Trailer #</span><span>R-2087</span></div>
+    <div class="field"><span class="label">Date / Time</span><span>Nov 16, 2026 — 6:42 AM</span></div>
+    <div class="field"><span class="label">Location</span><span>Riverside Distribution Center</span></div>
+    <div class="field"><span class="label">Odometer</span><span>184,327 mi</span></div>
+    <div class="field"><span class="label">Total Miles Driven</span><span>312 mi</span></div>
+  </div>
+
+  <div class="card">
+    <h2>DOT Defect Checklist</h2>
     <ul class="checklist">
-      <li>Brakes</li>
-      <li>Steering</li>
-      <li>Tires</li>
-      <li>Lights</li>
-      <li>Coupling devices</li>
-      <li>Wheels and rims</li>
-      <li>Emergency equipment</li>
+      <li>Air Brakes <span class="check">&#10003;</span></li>
+      <li class="oos-item">Brake Lines <span class="x-mark">&#10007;</span></li>
+      <li>Steering <span class="check">&#10003;</span></li>
+      <li>Tires <span class="check">&#10003;</span></li>
+      <li>Lights & Signals <span class="check">&#10003;</span></li>
+      <li>Coupling Devices <span class="check">&#10003;</span></li>
+      <li>Wheels & Rims <span class="check">&#10003;</span></li>
+      <li>Emergency Equipment <span class="check">&#10003;</span></li>
+      <li>Horn <span class="check">&#10003;</span></li>
+      <li>Mirrors <span class="check">&#10003;</span></li>
     </ul>
-    <div class="section-title">Status</div>
-    <div class="status-row">
-      <button class="status-btn green">No Defects Found</button>
-      <button class="status-btn red">Defects Found</button>
+  </div>
+
+  <div class="status-row">
+    <button class="status-btn green">No Defects Found</button>
+    <button class="status-btn red">Defects Found</button>
+  </div>
+
+  <div class="card">
+    <h2>Body Damage Photos</h2>
+    <div class="photo-area">
+      Tap to add photos
+      <span>Up to 10 photos</span>
     </div>
-    <div class="section-title">Body Damage Photos</div>
-    <button class="btn" style="background:#333;display:block;width:100%;padding:14px;border:none;border-radius:8px;color:#fff;font-size:16px;font-weight:600;margin-bottom:16px;cursor:pointer;">Take Photo</button>
-    <div class="section-title">Driver Signature</div>
-    <div class="sig-label">Sign below</div>
+  </div>
+
+  <div class="card">
+    <h2>Sign-Off</h2>
+    <div class="sig-label">Driver Signature</div>
     <div class="sig-line"></div>
-    <button style="display:block;width:100%;padding:14px;border:none;border-radius:8px;background:#007aff;color:#fff;font-size:16px;font-weight:600;cursor:pointer;">Submit DVIR</button>
+    <div class="sig-label">Mechanic Signature</div>
+    <div class="sig-line"></div>
+    <div class="sig-label">Supervisor Signature</div>
+    <div class="sig-line"></div>
+  </div>
+
+  <div class="footer-note">
+    FMCSA 49 CFR 396.11: Retain this DVIR for at least 90 days from date of inspection.<br>
+    FleetDVIR — Digital inspection reports for trucking fleets — Ralph's Grocery
   </div>
 </body>
 </html>
