@@ -13,7 +13,7 @@ export const Driver = {
   lastName: '',         // string, required
   selfieUrl: '',        // string (Firebase Storage URL), required before DVIR submission
   badgeStatus: 'pending', // 'pending' | 'approved' | 'denied'
-  role: 'driver',       // 'driver' | 'supervisor' | 'shop' | 'admin' (Larry only)
+  role: 'driver',       // 'driver' | 'supervisor' | 'shop' | 'shop_steward' | 'admin' (Larry only)
   createdAt: null,      // timestamp
   updatedAt: null,      // timestamp
 }
@@ -115,6 +115,7 @@ export const ChatGroup = {
 // - driver: creates DVIRs, chats, downloads own PDF
 // - supervisor: sees all DVIRs in real time, notified on submit
 // - shop: reviews and resolves defects
+// - shop_steward: same access as supervisor
 // - admin: Larry only. Badge approval, analytics reporting
 //   (login activity per driver, more detail than supervisors)
 // ============================================================
