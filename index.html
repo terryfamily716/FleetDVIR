@@ -22,7 +22,7 @@
   .field input[type="text"], .field select { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #2d3748; background: #0f1419; color: #e7e9ea; font-size: 15px; }
   .field input[type="text"]:focus, .field select:focus { outline: none; border-color: #3b82f6; }
   .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239ca3af' d='M1.41 0L6 4.58L10.59 0L12 1.41l-6 6l-6-6L1.41 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
-  .selfie-box { border: 2px dashed #2d3748; border-radius: 12px; padding: 24px; text-align: center; cursor: pointer; background: #0f1419; transition: border-color 0.2s; }
+  .selfie-box { border: 2px dashed #2d3748; border-radius: 12px; padding: 24px; text-align: center; cursor: pointer; background: #0f1419; transition: border-color 0.2s; display: block; }
   .selfie-box:hover { border-color: #3b82f6; }
   .selfie-box .icon { font-size: 28px; margin-bottom: 8px; }
   .selfie-box .hint { font-size: 13px; color: #6b7280; }
@@ -79,10 +79,10 @@
       </div>
       <div class="field">
         <label>Selfie Photo <span class="req">*</span></label>
-        <div class="selfie-box" id="selfieBox" onclick="document.getElementById('selfieInput').click()">
+        <label class="selfie-box" for="selfieInput">
           <div class="icon">&#128247;</div>
           <div class="hint">Tap to take or upload a selfie<br><span>Admin verifies your identity from this photo</span></div>
-        </div>
+        </label>
         <input type="file" id="selfieInput" accept="image/*" capture="user" style="display:none" onchange="handleSelfie(event)" oninput="handleSelfie(event)">
         <div class="selfie-preview" id="selfiePreview">
           <img id="selfieImg" src="" alt="Selfie preview">
