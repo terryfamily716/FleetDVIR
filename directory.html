@@ -26,7 +26,8 @@
   .member .role { font-size: 12px; color: #6b7280; margin-top: 2px; }
   .member .msg-btn { background: #2563eb; color: white; border: none; border-radius: 20px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
   .member .msg-btn:hover { background: #1d4ed8; }
-  .member .msg-btn.offline-btn { background: #374151; color: #9ca3af; cursor: default; }
+  .member .msg-btn.offline-btn { background: #374151; color: #9ca3af; }
+  .member .msg-btn.offline-btn:hover { background: #4b5563; color: #e7e9ea; }
 </style>
 </head>
 <body>
@@ -60,30 +61,30 @@
       <button class="msg-btn">Message</button>
     </div>
     <div class="roster-section"><h3>Offline</h3></div>
-    <div class="member" data-name="Carlos Mendez">
+    <div class="member" data-name="Carlos Mendez" onclick="startDM('Carlos Mendez')">
       <span class="dot offline"></span>
       <div class="info"><div class="name">Carlos Mendez</div><div class="role">Driver - Riverside</div></div>
-      <button class="msg-btn offline-btn">Offline</button>
+      <button class="msg-btn offline-btn">Message</button>
     </div>
-    <div class="member" data-name="Dana Whitfield">
+    <div class="member" data-name="Dana Whitfield" onclick="startDM('Dana Whitfield')">
       <span class="dot offline"></span>
       <div class="info"><div class="name">Dana Whitfield</div><div class="role">Supervisor - Riverside</div></div>
-      <button class="msg-btn offline-btn">Offline</button>
+      <button class="msg-btn offline-btn">Message</button>
     </div>
-    <div class="member" data-name="Elena Vasquez">
+    <div class="member" data-name="Elena Vasquez" onclick="startDM('Elena Vasquez')">
       <span class="dot offline"></span>
       <div class="info"><div class="name">Elena Vasquez</div><div class="role">Driver - Riverside Night Crew</div></div>
-      <button class="msg-btn offline-btn">Offline</button>
+      <button class="msg-btn offline-btn">Message</button>
     </div>
-    <div class="member" data-name="Frank Okafor">
+    <div class="member" data-name="Frank Okafor" onclick="startDM('Frank Okafor')">
       <span class="dot offline"></span>
       <div class="info"><div class="name">Frank Okafor</div><div class="role">Driver - Riverside</div></div>
-      <button class="msg-btn offline-btn">Offline</button>
+      <button class="msg-btn offline-btn">Message</button>
     </div>
-    <div class="member" data-name="Grace Patel">
+    <div class="member" data-name="Grace Patel" onclick="startDM('Grace Patel')">
       <span class="dot offline"></span>
       <div class="info"><div class="name">Grace Patel</div><div class="role">Admin</div></div>
-      <button class="msg-btn offline-btn">Offline</button>
+      <button class="msg-btn offline-btn">Message</button>
     </div>
   </div>
 <script>
