@@ -26,7 +26,7 @@ create table profiles (
   last_name text not null,
   selfie_url text,
   badge_status text not null default 'pending' check (badge_status in ('pending','approved','rejected')),
-  role text not null default 'driver' check (role in ('driver','supervisor','shop','admin')),
+  role text not null default 'driver' check (role in ('driver','supervisor','shop','shop_steward','admin')),
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
@@ -56,7 +56,7 @@ create table dvirs (
 -- DEFECTS (replaces dvirs/{id}/defects subcollection)
 create table defects (
   id uuid primary key default uuid_generate_v4(),
-  tenant_id uuid not null references tenants(id) default '11111111-1111-1111-1111-111111111111',
+  tenant_id uuid not null references tenants(id) default '11111111-1111-1111-1111-111111111111",
   dvir_id uuid not null references dvirs(id) on delete cascade,
   item text not null,
   result text not null check (result in ('pass','fail')),
@@ -72,7 +72,7 @@ create table defects (
 -- BODY DAMAGE PHOTOS (replaces Storage dvirs/{id}/body-damage)
 create table body_damage_photos (
   id uuid primary key default uuid_generate_v4(),
-  tenant_id uuid not null references tenants(id) default '11111111-1111-1111-1111-111111111111',
+  tenant_id uuid not null references tenants(id) default '11111111-1111-1111-1111-111111111111",
   dvir_id uuid not null references dvirs(id) on delete cascade,
   photo_url text not null,
   created_at timestamptz default now()
@@ -81,7 +81,7 @@ create table body_damage_photos (
 -- CHAT MESSAGES (replaces Firestore chat)
 create table chat_messages (
   id uuid primary key default uuid_generate_v4(),
-  tenant_id uuid not null references tenants(id) default '11111111-1111-1111-1111-111111111111',
+  tenant_id uuid not null references tenants(id) default '11111111-1111-1111-1111-111111111111",
   sender_id uuid not null references profiles(id),
   group_id text,
   recipient_id uuid references profiles(id),
@@ -93,7 +93,7 @@ create table chat_messages (
 -- CHAT GROUPS
 create table chat_groups (
   id text primary key,
-  tenant_id uuid not null references tenants(id) default '11111111-1111-1111-1111-111111111111',
+  tenant_id uuid not null references tenants(id) default '11111111-1111-1111-1111-111111111111",
   name text not null,
   created_by uuid references profiles(id),
   created_at timestamptz default now()
@@ -138,14 +138,14 @@ create policy profiles_tenant on profiles for select using (tenant_id = my_tenan
 create policy profiles_insert on profiles for insert with check (id = auth.uid() and badge_status = 'pending' and role = 'driver);
 create policy profiles_update_admin on profiles for update using (exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin' and p.tenant_id = profiles.tenant_id));
 
-create policy dvirs_read on dvirs for select using (tenant_id = my_tenant() and (driver_id = auth.uid() or exists (select 1 from profiles p where p.id = auth.uid() and p.role in ('supervisor','shop','admin') and p.badge_status = 'approved'));
+create policy dvirs_read on dvirs for select using (tenant_id = my_tenant() and (driver_id = auth.uid() or exists (select 1 from profiles p where p.id = auth.uid() and p.role in ('supervisor','shop_steward','shop','admin') and p.badge_status = 'approved'));
 create policy dvirs_insert on dvirs for insert with check (driver_id = auth.uid() and exists (select 1 from profiles p where p.id = auth.uid() and p.badge_status = 'approved' and p.role = 'driver'));
 create policy dvirs_update_own_draft on dvirs for update using (driver_id = auth.uid() and submitted = false);
 
-create policy defects_read on defects for select using (tenant_id = my_tenant() and (exists (select 1 from dvirs d where d.id = defects.dvir_id and d.driver_id = auth.uid()) or exists (select 1 from profiles p where p.id = auth.uid() and p.role in ('shop','admin','supervisor') and p.badge_status = 'approved'));
+create policy defects_read on defects for select using (tenant_id = my_tenant() and (exists (select 1 from dvirs d where d.id = defects.dvir_id and d.driver_id = auth.uid()) or exists (select 1 from profiles p where p.id = auth.uid() and p.role in ('shop','admin','supervisor','shop_steward') and p.badge_status = 'approved'));
 create policy defects_update_shop on defects for update using (exists (select 1 from profiles p where p.id = auth.uid() and p.role in ('shop','admin') and p.badge_status = 'approved'));
 
-create policy photos_read on body_damage_photos for select using (tenant_id = my_tenant() and (exists (select 1 from dvirs d where d.id = body_damage_photos.dvir_id and d.driver_id = auth.uid()) or exists (select 1 from profiles p where p.id = auth.uid() and p.role in ('supervisor','shop','admin') and p.badge_status = 'approved'));
+create policy photos_read on body_damage_photos for select using (tenant_id = my_tenant() and (exists (select 1 from dvirs d where d.id = body_damage_photos.dvir_id and d.driver_id = auth.uid()) or exists (select 1 from profiles p where p.id = auth.uid() and p.role in ('supervisor','shop_steward','shop','admin') and p.badge_status = 'approved'));
 create policy photos_insert on body_damage_photos for insert with check (exists (select 1 from dvirs d where d.id = body_damage_photos.dvir_id and d.driver_id = auth.uid() and d.submitted = false));
 
 create policy chat_read on chat_messages for select using (tenant_id = my_tenant() and exists (select 1 from profiles p where p.id = auth.uid() and p.badge_status = 'approved') and (recipient_id = auth.uid() or exists (select 1 from chat_group_members m where m.group_id = chat_messages.group_id and m.profile_id = auth.uid()) or sender_id = auth.uid());
