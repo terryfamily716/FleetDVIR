@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FleetDVIR - Chat</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f1419; color: #e7e9ea; min-height: 100vh; display: flex; flex-direction: column; }
+  .header { background: #1a1f2e; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #2d3748; }
+  .header h1 { font-size: 20px; color: #3b82f6; }
+  .header .driver-info { font-size: 14px; color: #9ca3af; text-align: right; }
+  .top-buttons { display: flex; gap: 12px; padding: 16px 20px; }
+  .btn { flex: 1; padding: 16px; border-radius: 12px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; position: relative; }
+  .btn-dvir { background: #1e3a5f; color: #60a5fa; }
+  .btn-chat { background: #2563eb; color: white; }
+  .badge { position: absolute; top: 8px; right: 8px; background: #ef4444; color: white; font-size: 12px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .chat-layout { display: flex; flex: 1; min-height: 0; }
+  .conv-list { width: 40%; border-right: 1px solid #2d3748; overflow-y: auto; }
+  .conv-item { padding: 14px 16px; border-bottom: 1px solid #1f2937; cursor: pointer; }
+  .conv-item:hover { background: #1a1f2e; }
+  .conv-item.active { background: #1e3a5f; }
+  .conv-item .name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .conv-item .preview { font-size: 13px; color: #9ca3af; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .conv-item .time { font-size: 11px; color: #6b7280; float: right; }
+  .conv-item .unread { background: #ef4444; color: white; font-size: 11px; font-weight: 700; border-radius: 10px; padding: 2px 7px; margin-left: 6px; }
+  .thread { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .thread-header { padding: 14px 16px; background: #1a1f2e; border-bottom: 1px solid #2d3748; font-size: 16px; font-weight: 600; }
+  .messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .msg { max-width: 75%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.4; }
+  .msg.them { background: #1e3a5f; align-self: flex-start; border-bottom-left-radius: 4px; }
+  .msg.me { background: #166534; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .msg .sender { font-size: 11px; color: #9ca3af; margin-bottom: 4px; }
+  .msg .time { font-size: 10px; color: #6b7280; margin-top: 4px; text-align: right; }
+  .input-bar { display: flex; gap: 10px; padding: 12px 16px; background: #1a1f2e; border-top: 1px solid #2d3748; }
+  .input-bar input { flex: 1; background: #0f1419; border: 1px solid #2d3748; border-radius: 24px; padding: 12px 18px; color: #e7e9ea; font-size: 14px; outline: none; }
+  .input-bar input:focus { border-color: #3b82f6; }
+  .input-bar button { background: #3b82f6; color: white; border: none; border-radius: 24px; padding: 12px 20px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .new-group-btn { margin: 12px 16px; background: #1a1f2e; border: 1px dashed #3b82f6; color: #60a5fa; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; }
+  .new-group-btn:hover { background: #1e3a5f; }
+  @media (max-width: 600px) {
+    .conv-list { width: 100%; display: none; }
+    .conv-list.mobile-show { display: block; }
+    .thread.mobile-hide { display: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1>FleetDVIR</h1>
+    <div class="driver-info">Larry Terry<br>Badge #1042</div>
+  </div>
+  <div class="top-buttons">
+    <button class="btn btn-dvir" onclick="location.href='dashboard.html'">Create DVIR</button>
+    <button class="btn btn-chat">Chat<span class="badge">1</span></button>
+  </div>
+  <div class="chat-layout">
+    <div class="conv-list">
+      <div class="conv-item active">
+        <span class="time">2m</span>
+        <div class="name">Riverside Night Crew <span class="unread">1</span></div>
+        <div class="preview">Marcus: Brake check on 9021 done, mechanic signed off</div>
+      </div>
+      <div class="conv-item">
+        <span class="time">1h</span>
+        <div class="name">Victor Delgado</div>
+        <div class="preview">You: Copy that, see you at the dock</div>
+      </div>
+      <div class="conv-item">
+        <span class="time">3h</span>
+        <div class="name">Shop Team</div>
+        <div class="preview">Rosa: Tractor 8847 ready for pickup</div>
+      </div>
+      <div class="conv-item">
+        <span class="time">Yesterday</span>
+        <div class="name">All Drivers - Riverside</div>
+        <div class="preview">Admin: Bid Day is Feb 2024, check the live sheet</div>
+      </div>
+      <button class="new-group-btn">+ New Group</button>
+    </div>
+    <div class="thread">
+      <div class="thread-header">Riverside Night Crew</div>
+      <div class="messages">
+        <div class="msg them">
+          <div class="sender">Marcus Ruiz</div>
+          Brake air leak on 9021 is fixed. Mechanic Torres signed off at 3:40 AM.
+          <div class="time">11:52 PM</div>
+        </div>
+        <div class="msg me">
+          Good, that was the out-of-service one. Appreciate the heads up.
+          <div class="time">11:54 PM</div>
+        </div>
+        <div class="msg them">
+          <div class="sender">Marcus Ruiz</div>
+          Also, dispatch is adding a third trailer to your route tonight. 4417.
+          <div class="time">12:01 AM</div>
+        </div>
+        <div class="msg me">
+          Roger. I'll note it on the DVIR.
+          <div class="time">12:02 AM</div>
+        </div>
+      </div>
+      <div class="input-bar">
+        <input type="text" placeholder="Type a message...">
+        <button>Send</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
