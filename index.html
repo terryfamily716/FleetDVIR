@@ -102,6 +102,7 @@
   var selfieDataUrl = null;
 
   function handleSelfie(event) {
+    alert('handleSelfie called, files: ' + event.target.files.length);
     var file = event.target.files[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
