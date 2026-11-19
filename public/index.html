@@ -1,12 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FleetDVIR</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FleetDVIR</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f1419; color: #e7e9ea; min-height: 100vh; display: flex; flex-direction: column; }
+  .header { background: #1a1f2e; padding: 20px; text-align: center; border-bottom: 1px solid #2d3748; }
+  .header h1 { font-size: 32px; color: #3b82f6; letter-spacing: 1px; }
+  .header .tagline { font-size: 15px; color: #9ca3af; margin-top: 6px; }
+  .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; text-align: center; }
+  .features { list-style: none; max-width: 480px; width: 100%; margin-bottom: 36px; }
+  .features li { background: #1a1f2e; border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; font-size: 15px; color: #e7e9ea; border-left: 4px solid #3b82f6; text-align: left; }
+  .features li span { color: #60a5fa; font-weight: 600; }
+  .cta { display: flex; flex-direction: column; gap: 14px; max-width: 320px; width: 100%; }
+  .btn { padding: 16px; border-radius: 12px; border: none; font-size: 17px; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center; display: block; }
+  .btn-signin { background: #3b82f6; color: white; }
+  .btn-admin { background: #1e3a5f; color: #60a5fa; }
+  .btn-signin:hover { background: #2563eb; }
+  .btn-admin:hover { background: #243b55; }
+  .footer { background: #1a1f2e; padding: 16px; text-align: center; font-size: 13px; color: #6b7280; border-top: 1px solid #2d3748; }
+  .footer span { color: #9ca3af; }
+</style>
 </head>
 <body>
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root"></div>
+  <div class="header">
+    <h1>FleetDVIR</h1>
+    <div class="tagline">Digital inspection reports for trucking fleets</div>
+  </div>
+  <div class="hero">
+    <ul class="features">
+      <li><span>DOT-compliant</span> defect checklists built for FMCSA 49 CFR 396</li>
+      <li><span>Photo documentation</span> for defects and body damage</li>
+      <li><span>Real-time visibility</span> for supervisors across the fleet</li>
+      <li><span>Built-in driver chat</span> with groups and direct messages</li>
+    </ul>
+    <div class="cta">
+      <a class="btn btn-signin" href="dashboard.html">Sign In</a>
+      <a class="btn btn-admin" href="dashboard.html">Admin Analytics</a>
+    </div>
+  </div>
+  <div class="footer"><span>Ralph's Grocery</span></div>
 </body>
 </html>
