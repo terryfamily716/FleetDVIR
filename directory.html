@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FleetDVIR - Directory</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f1419; color: #e7e9ea; min-height: 100vh; display: flex; flex-direction: column; }
+  .header { background: #1a1f2e; padding: 16px 20px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid #2d3748; }
+  .back-btn { background: none; border: none; color: #60a5fa; font-size: 24px; cursor: pointer; padding: 0; }
+  .header h1 { font-size: 20px; color: #3b82f6; }
+  .search { padding: 12px 16px; }
+  .search input { width: 100%; background: #0f1419; border: 1px solid #2d3748; border-radius: 24px; padding: 12px 18px; color: #e7e9ea; font-size: 14px; outline: none; }
+  .search input:focus { border-color: #3b82f6; }
+  .roster { flex: 1; overflow-y: auto; }
+  .roster-section { padding: 8px 16px 4px; }
+  .roster-section h3 { font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .member { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid #1f2937; cursor: pointer; }
+  .member:hover { background: #1a1f2e; }
+  .member .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .member .dot.online { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+  .member .dot.offline { background: #4b5563; }
+  .member .info { flex: 1; min-width: 0; }
+  .member .name { font-size: 15px; font-weight: 600; }
+  .member .role { font-size: 12px; color: #6b7280; margin-top: 2px; }
+  .member .msg-btn { background: #2563eb; color: white; border: none; border-radius: 20px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+  .member .msg-btn:hover { background: #1d4ed8; }
+  .member .msg-btn.offline-btn { background: #374151; color: #9ca3af; cursor: default; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <button class="back-btn" onclick="location.href='chat.html'">&#8592;</button>
+    <h1>Directory</h1>
+  </div>
+  <div class="search">
+    <input type="text" placeholder="Search drivers..." oninput="filterMembers(this.value)">
+  </div>
+  <div class="roster" id="roster">
+    <div class="roster-section"><h3>Online</h3></div>
+    <div class="member" data-name="Marcus Ruiz" onclick="startDM('Marcus Ruiz')">
+      <span class="dot online"></span>
+      <div class="info"><div class="name">Marcus Ruiz</div><div class="role">Driver - Riverside Night Crew</div></div>
+      <button class="msg-btn">Message</button>
+    </div>
+    <div class="member" data-name="Victor Delgado" onclick="startDM('Victor Delgado')">
+      <span class="dot online"></span>
+      <div class="info"><div class="name">Victor Delgado</div><div class="role">Driver - Riverside</div></div>
+      <button class="msg-btn">Message</button>
+    </div>
+    <div class="member" data-name="Rosa Torres" onclick="startDM('Rosa Torres')">
+      <span class="dot online"></span>
+      <div class="info"><div class="name">Rosa Torres</div><div class="role">Mechanic - Shop</div></div>
+      <button class="msg-btn">Message</button>
+    </div>
+    <div class="member" data-name="Dispatch" onclick="startDM('Dispatch')">
+      <span class="dot online"></span>
+      <div class="info"><div class="name">Dispatch</div><div class="role">Riverside Distribution Center</div></div>
+      <button class="msg-btn">Message</button>
+    </div>
+    <div class="roster-section"><h3>Offline</h3></div>
+    <div class="member" data-name="Carlos Mendez">
+      <span class="dot offline"></span>
+      <div class="info"><div class="name">Carlos Mendez</div><div class="role">Driver - Riverside</div></div>
+      <button class="msg-btn offline-btn">Offline</button>
+    </div>
+    <div class="member" data-name="Dana Whitfield">
+      <span class="dot offline"></span>
+      <div class="info"><div class="name">Dana Whitfield</div><div class="role">Supervisor - Riverside</div></div>
+      <button class="msg-btn offline-btn">Offline</button>
+    </div>
+    <div class="member" data-name="Elena Vasquez">
+      <span class="dot offline"></span>
+      <div class="info"><div class="name">Elena Vasquez</div><div class="role">Driver - Riverside Night Crew</div></div>
+      <button class="msg-btn offline-btn">Offline</button>
+    </div>
+    <div class="member" data-name="Frank Okafor">
+      <span class="dot offline"></span>
+      <div class="info"><div class="name">Frank Okafor</div><div class="role">Driver - Riverside</div></div>
+      <button class="msg-btn offline-btn">Offline</button>
+    </div>
+    <div class="member" data-name="Grace Patel">
+      <span class="dot offline"></span>
+      <div class="info"><div class="name">Grace Patel</div><div class="role">Admin</div></div>
+      <button class="msg-btn offline-btn">Offline</button>
+    </div>
+  </div>
+<script>
+function filterMembers(q) {
+  var members = document.querySelectorAll('.member);
+  var lower = q.toLowerCase();
+  members.forEach(function(m) {
+    var name = m.getAttribute('data-name').toLowerCase();
+    m.style.display = name.indexOf(lower) !== -1 ? '' : 'none';
+  });
+}
+function startDM(name) {
+  location.href = 'chat.html?dm=' + encodeURIComponent(name);
+}
+</script>
+</body>
+</html>
