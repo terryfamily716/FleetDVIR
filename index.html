@@ -108,7 +108,7 @@
       return;
     }
     var reader = new FileReader();
-    reader.onclick = function(e) {
+    reader.onload = function(e) {
       selfieDataUrl = e.target.result;
       document.getElementById('selfieImg').src = selfieDataUrl;
       document.getElementById('selfiePreview').style.display = 'block';
