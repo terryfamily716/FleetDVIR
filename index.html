@@ -19,8 +19,9 @@
   .field { margin-bottom: 16px; }
   .field label { display: block; font-size: 13px; color: #9ca3af; margin-bottom: 6px; font-weight: 600; }
   .field label .req { color: #ef4444; }
-  .field input[type="text"] { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #2d3748; background: #0f1419; color: #e7e9ea; font-size: 15px; }
-  .field input[type="text"]:focus { outline: none; border-color: #3b82f6; }
+  .field input[type="text"], .field select { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #2d3748; background: #0f1419; color: #e7e9ea; font-size: 15px; }
+  .field input[type="text"]:focus, .field select:focus { outline: none; border-color: #3b82f6; }
+  .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239ca3af' d='M1.41 0L6 4.58L10.59 0L12 1.41l-6 6l-6-6L1.41 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
   .selfie-box { border: 2px dashed #2d3748; border-radius: 12px; padding: 24px; text-align: center; cursor: pointer; background: #0f1419; transition: border-color 0.2s; }
   .selfie-box:hover { border-color: #3b82f6; }
   .selfie-box .icon { font-size: 28px; margin-bottom: 8px; }
@@ -71,6 +72,13 @@
         <input type="text" id="lastName" placeholder="Enter last name">
       </div>
       <div class="field">
+        <label>Company <span class="req">*</span></label>
+        <select id="company">
+          <option value="">Select your company</option>
+          <option value="ralphs">Ralph's Grocery</option>
+        </select>
+      </div>
+      <div class="field">
         <label>Selfie Photo <span class="req">*</span></label>
         <div class="selfie-box" id="selfieBox" onclick="document.getElementById('selfieInput').click()">
           <div class="icon">&#128247;</div>
@@ -82,7 +90,7 @@
           <button class="remove" onclick="removeSelfie()">Remove photo</button>
         </div>
       </div>
-      <div class="badge-note"><span>&#9888; Badge required:</span> After you submit, your profile goes to pending. Admin reviews your selfie and issues your badge manually. No badge means no DVIR access, chat, or PDF downloads.</div>
+      <div class="badge-note"><span>&#9888; Badge required:</span> After you submit, your profile goes to pending. Admin reviews your selfie and issues your badge manually. No badge means no DVIR access, chat, or PDF downloads. Your company selection determines which DVIRs you can access.</div>
     </div>
 
     <div class="cta">
@@ -103,7 +111,7 @@
       return;
     }
     var reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onclick = function(e) {
       selfieDataUrl = e.target.result;
       document.getElementById('selfieImg').src = selfieDataUrl;
       document.getElementById('selfiePreview').style.display = 'block';
@@ -122,11 +130,16 @@
   function submitProfile() {
     var first = document.getElementById('firstName').value.trim();
     var last = document.getElementById('lastName').value.trim();
+    var company = document.getElementById('company').value;
     var msg = document.getElementById('msg);
     if (!first || !last) {
       msg.className = 'msg';
       msg.textContent = '';
       alert('First name and last name are required.');
+      return;
+    }
+    if (!company) {
+      alert('Please select your company.');
       return;
     }
     if (!selfieDataUrl) {
@@ -139,7 +152,7 @@
     // Simulated submit - Firebase wiring comes next
     setTimeout(function() {
       msg.className = 'msg pending';
-      msg.textContent = 'Profile submitted for ' + first + ' ' + last + '. Badge pending admin approval. You will be notified when your badge is issued.';
+      msg.textContent = 'Profile submitted for ' + first + ' ' + last + ' at ' + document.getElementById('company').options[document.getElementById('company').selectedIndex].text + '. Badge pending admin approval. You will be notified when your badge is issued.';
       btn.disabled = false;
       btn.textContent = 'Submit Profile & Request Badge';
     }, 800);
