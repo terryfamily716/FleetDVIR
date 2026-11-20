@@ -11,6 +11,8 @@
   .header { background: #1a1f2e; padding: 20px; text-align: center; border-bottom: 1px solid #2d3748; }
   .header h1 { font-size: 32px; color: #3b82f6; letter-spacing: 1px; }
   .header .tagline { font-size: 15px; color: #9ca3af; margin-top: 6px; }
+  .header .bidday-link { display: inline-block; margin-top: 12px; padding: 8px 16px; background: #0d0d0d; border: 2px solid #ef4444; border-radius: 8px; color: #60a5fa; text-decoration: none; font-size: 14px; font-weight: 700; }
+  .header .bidday-link:active { background: #1a1a1a; }
   .main { flex: 1; max-width: 520px; width: 100%; margin: 0 auto; padding: 24px 20px; }
   .features { list-style: none; margin-bottom: 28px; }
   .features li { background: #1a1f2e; border-radius: 12px; padding: 14px 18px; margin-bottom: 10px; font-size: 14px; color: #e7e9ea; border-left: 4px solid #3b82f6; text-align: left; }
@@ -20,8 +22,8 @@
   .field { margin-bottom: 16px; }
   .field label { display: block; font-size: 13px; color: #9ca3af; margin-bottom: 6px; font-weight: 600; }
   .field label .req { color: #ef4444; }
-  .field input[type="text"], .field input[type="tel"], .field select { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #2d3748; background: #0f1419; color: #e7e9ea; font-size: 15px; }
-  .field input[type="text"]:focus, .field input[type="tel"]:focus, .field select:focus { outline: none; border-color: #3b82f6; }
+  .field input[type="text"], .field select { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #2d3748; background: #0f1419; color: #e7e9ea; font-size: 15px; }
+  .field input[type="text"]:focus, .field select:focus { outline: none; border-color: #3b82f6; }
   .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239ca3af' d='M1.41 0L6 4.58L10.59 0L12 1.41l-6 6l-6-6L1.41 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
   .badge-note { font-size: 12px; color: #6b7280; margin-top: 10px; line-height: 1.5; }
   .badge-note span { color: #f59e0b; }
@@ -36,14 +38,13 @@
   .msg.success { background: #14532d; color: #4ade80; display: block; }
   .msg.pending { background: #78350f; color: #fcd34d; display: block; }
   .msg.error { background: #7f1d1d; color: #fca5a5; display: block; }
-  .otp-section { display: none; }
-  .otp-section.show { display: block; }
 </style>
 </head>
 <body>
   <div class="header">
     <h1>FleetDVIR</h1>
     <div class="tagline">Digital inspection reports for trucking fleets</div>
+    <a class="bidday-link" href="https://terryfamily716.github.io/Ralphs-Drivers-Bid-Day">Bid Day Live &rarr;</a>
   </div>
   <div class="main">
     <ul class="features">
@@ -73,20 +74,11 @@
           <option value="ralphs">Ralph's Grocery</option>
         </select>
       </div>
-      <div class="field">
-        <label>Phone Number <span class="req">*</span></label>
-        <input type="tel" id="phone" placeholder="Enter phone number">
-      </div>
-      <div class="field otp-section" id="otpSection">
-        <label>Verification Code <span class="req">*</span></label>
-        <input type="text" id="otp" placeholder="Enter 6-digit code from text" inputmode="numeric" autocomplete="one-time-code">
-      </div>
-      <div class="badge-note"><span>&#9888; Badge required:</span> After you verify your phone, your profile goes to pending. Admin reviews and issues your badge manually. No badge means no DVIR access, chat, or PDF downloads. Your company selection determines which DVIRs you can access.</div>
+      <div class="badge-note"><span>&#9888; Badge required:</span> After you submit, your profile goes to pending. Admin reviews and issues your badge manually. No badge means no DVIR access, chat, or PDF downloads. Your company selection determines which DVIRs you can access.</div>
     </div>
 
     <div class="cta">
-      <button class="btn btn-signin" id="sendOtpBtn" onclick="sendOTP()">Send Verification Code</button>
-      <button class="btn btn-signin otp-section" id="verifyBtn" onclick="verifyOTP()">Verify & Submit Profile</button>
+      <button class="btn btn-signin" id="submitBtn" onclick="submitProfile()">Submit Profile & Request Badge</button>
       <a class="btn btn-signin" href="dashboard.html">Sign In</a>
       <a class="btn btn-admin" href="dashboard.html">Admin Analytics</a>
     </div>
@@ -97,13 +89,14 @@
   var { createClient } = supabase;
   var sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  async function sendOTP() {
+  async function submitProfile() {
     var first = document.getElementById('firstName').value.trim();
     var last = document.getElementById('lastName').value.trim();
     var company = document.getElementById('company').value;
-    var phone = document.getElementById('phone').value.trim();
     var msg = document.getElementById('msg);
     if (!first || !last) {
+      msg.className = 'msg';
+      msg.textContent = '';
       alert('First name and last name are required.');
       return;
     }
@@ -111,69 +104,31 @@
       alert('Please select your company.');
       return;
     }
-    if (!phone) {
-      alert('Phone number is required.');
-      return;
-    }
-    var btn = document.getElementById('sendOtpBtn);
+    var btn = document.getElementById('submitBtn);
     btn.disabled = true;
-    btn.textContent = 'Sending...';
+    btn.textContent = 'Submitting...';
     msg.className = 'msg';
     msg.textContent = '';
     try {
-      var { error } = await sb.auth.signInWithOtp({ phone: phone });
-      if (error) throw error;
-      msg.className = 'msg pending';
-      msg.textContent = 'Verification code sent to ' + phone + '. Enter it below.';
-      document.getElementById('otpSection').classList.add('show);
-      document.getElementById('verifyBtn').classList.add('show);
-      btn.style.display = 'none';
-    } catch (err) {
-      msg.className = 'msg error';
-      msg.textContent = 'Error sending code: ' + err.message;
-      btn.disabled = false;
-      btn.textContent = 'Send Verification Code';
-    }
-  }
-
-  async function verifyOTP() {
-    var first = document.getElementById('firstName').value.trim();
-    var last = document.getElementById('lastName').value.trim();
-    var company = document.getElementById('company').value;
-    var phone = document.getElementById('phone').value.trim();
-    var otp = document.getElementById('otp').value.trim();
-    var msg = document.getElementById('msg);
-    if (!otp) {
-      alert('Please enter the verification code.');
-      return;
-    }
-    var btn = document.getElementById('verifyBtn);
-    btn.disabled = true;
-    btn.textContent = 'Verifying...';
-    msg.className = 'msg';
-    msg.textContent = '';
-    try {
-      var { data, error } = await sb.auth.verifyOtp({ phone: phone, token: otp, type: 'sms' });
-      if (error) throw error;
-      var { error: insertError } = await sb.from('profiles').insert([
+      var { error } = await sb.from('profiles').insert([
         {
           first_name: first,
           last_name: last,
           company: company,
-          phone: phone,
           badge_status: 'pending',
           role: 'driver'
         }
       ]);
-      if (insertError) throw insertError;
+      if (error) throw error;
       var companyText = document.getElementById('company').options[document.getElementById('company').selectedIndex].text;
       msg.className = 'msg pending';
-      msg.textContent = 'Phone verified for ' + first + ' ' + last + ' at ' + companyText + '. Badge pending admin approval. You will be notified when your badge is issued.';
+      msg.textContent = 'Profile submitted for ' + first + ' ' + last + ' at ' + companyText + '. Badge pending admin approval. You will be notified when your badge is issued.';
     } catch (err) {
       msg.className = 'msg error';
-      msg.textContent = 'Error: ' + err.message;
+      msg.textContent = 'Error submitting profile: ' + err.message;
+    } finally {
       btn.disabled = false;
-      btn.textContent = 'Verify & Submit Profile';
+      btn.textContent = 'Submit Profile & Request Badge';
     }
   }
 </script>
