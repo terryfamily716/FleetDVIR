@@ -11,6 +11,8 @@
     header { background: #0d0d0d; padding: 10px 16px; border-bottom: 1px solid #333; text-align: center; flex-shrink: 0; }
     header h1 { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
     header p { font-size: 12px; color: #4ade80; }
+    .back-link { display: block; text-align: center; padding: 10px 16px; background: #0d0d0d; border-bottom: 1px solid #333; color: #60a5fa; text-decoration: none; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+    .back-link:active { background: #1a1a1a; }
     .info-row { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 16px; background: #0d0d0d; border-bottom: 1px solid #333; flex-shrink: 0; }
     .info-field { flex: 1 1 calc(50% - 8px); min-width: 120px; }
     .info-field label { display: block; font-size: 10px; color: #888; margin-bottom: 2px; }
@@ -46,8 +48,6 @@
     .signatures { margin-bottom: 20px; }
     .sig-line { border-bottom: 1px solid #555; padding: 18px 0 6px; margin-bottom: 4px; font-size: 12px; color: #888; }
     .footer { background: #0d0d0d; padding: 10px 16px; border-top: 1px solid #333; text-align: center; font-size: 10px; color: #666; flex-shrink: 0; }
-    .back-link { display: block; text-align: center; padding: 10px 16px; background: #0d0d0d; border-top: 1px solid #333; color: #60a5fa; text-decoration: none; font-size: 13px; font-weight: 600; flex-shrink: 0; }
-    .back-link:active { background: #1a1a1a; }
     .pdf-btn { display: block; width: calc(100% - 32px); margin: 0 16px 16px; padding: 14px; background: #60a5fa; color: #0d0d0d; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; flex-shrink: 0; }
     .pdf-btn:active { opacity: 0.8; }
   </style>
@@ -57,6 +57,7 @@
     <h1>Ralph's Drivers DVIR</h1>
     <p>Digital inspection reports for trucking fleets</p>
   </header>
+  <a class="back-link" href="dashboard.html">&larr; Back to Dashboard</a>
   <div class="info-row">
     <div class="info-field">
       <label>First Name *</label>
@@ -75,12 +76,12 @@
       <input type="text" id="tractorNum" placeholder="Tractor">
     </div>
     <div class="info-field">
-      <label>Trailer Number</label>
-      <input type="text" id="trailerNum" placeholder="Optional if bobtailing">
-    </div>
-    <div class="info-field">
       <label>Odometer Reading *</label>
       <input type="text" id="odometer" placeholder="Odometer">
+    </div>
+    <div class="info-field">
+      <label>Trailer Number</label>
+      <input type="text" id="trailerNum" placeholder="Optional if bobtailing">
     </div>
   </div>
   <p class="required-note">* = required field &mdash; Checklist per FMCSA 49 CFR 396 Appendix G</p>
@@ -127,7 +128,6 @@
     </div>
   </div>
   <button class="pdf-btn" onclick="generatePDF()">Download PDF</button>
-  <a class="back-link" href="dashboard.html">&larr; Back to Dashboard</a>
   <div class="footer">FMCSA requires retention of DVIRs for a minimum of 90 days (49 CFR 396.11). Data retained 90 days. Checklist per 49 CFR 396 Appendix G.</div>
   <script>
     var currentTab = "pre";
@@ -244,8 +244,8 @@
       doc.text("Driver: " + firstName + " " + lastName, 20, 40);
       doc.text("Company: Ralph's Grocery", 20, 48);
       doc.text("Tractor: " + tractorNum, 20, 56);
-      doc.text("Trailer: " + trailerNum, 20, 64);
-      doc.text("Odometer: " + odometer, 20, 72);
+      doc.text("Odometer: " + odometer, 20, 64);
+      doc.text("Trailer: " + trailerNum, 20, 72);
       doc.text("Inspection Type: " + (currentTab === "pre" ? "Pre-Trip" : "Post-Trip"), 20, 80);
       doc.text("Date: " + new Date().toLocaleDateString(), 20, 88);
       var y = 100;
