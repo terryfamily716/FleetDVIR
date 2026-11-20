@@ -22,7 +22,7 @@
   .field label .req { color: #ef4444; }
   .field input[type="text"], .field select { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #2d3748; background: #0f1419; color: #e7e9ea; font-size: 15px; }
   .field input[type="text"]:focus, .field select:focus { outline: none; border-color: #3b82f6; }
-  .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewView='0 0 12 8'%3E%3Cpath fill='%239ca3af' d='M1.41 0L6 4.58L10.59 0L12 1.41l-6 6l-6-6L1.41 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239ca3af' d='M1.41 0L6 4.58L10.59 0L12 1.41l-6 6l-6-6L1.41 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
   .badge-note { font-size: 12px; color: #6b7280; margin-top: 10px; line-height: 1.5; }
   .badge-note span { color: #f59e0b; }
   .cta { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
@@ -96,57 +96,57 @@
   </div>
 
 <script>
-  var SUPABASE_URL = 'https://wrcojseshbjowilmhaou.supabase.co';
-  var SUPABASE_ANON_KEY = 'sb_publishable_R7BoVxY23UbARLhFoVMBxg_wJllvQgp';
+  var SUPABASE_URL = "https://wrcojseshbjowilmhaou.supabase.co";
+  var SUPABASE_ANON_KEY = "sb_publishable_R7BoVxY23UbARLhFoVMBxg_wJllvQgp";
   var { createClient } = supabase;
   var sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   function closeOverlay() {
-    document.getElementById('overlay').classList.remove('show);
+    document.getElementById("overlay").classList.remove("show");
   }
 
   async function submitProfile() {
-    var first = document.getElementById('firstName').value.trim();
-    var last = document.getElementById('lastName').value.trim();
-    var company = document.getElementById('company').value;
-    var msg = document.getElementById('msg);
+    var first = document.getElementById("firstName").value.trim();
+    var last = document.getElementById("lastName").value.trim();
+    var company = document.getElementById("company").value;
+    var msg = document.getElementById("msg");
     if (!first || !last) {
-      msg.className = 'msg';
-      msg.textContent = '';
-      alert('First name and last name are required.');
+      msg.className = "msg";
+      msg.textContent = "";
+      alert("First name and last name are required.");
       return;
     }
     if (!company) {
-      alert('Please select your company.');
+      alert("Please select your company.");
       return;
     }
-    var btn = document.getElementById('submitBtn);
+    var btn = document.getElementById("submitBtn");
     btn.disabled = true;
-    btn.textContent = 'Submitting...';
-    msg.className = 'msg';
-    msg.textContent = '';
+    btn.textContent = "Submitting...";
+    msg.className = "msg";
+    msg.textContent = "";
     try {
-      var { error } = await sb.from('profiles').insert([
+      var { error } = await sb.from("profiles").insert([
         {
           first_name: first,
           last_name: last,
           company: company,
-          badge_status: 'pending',
-          role: 'driver'
+          badge_status: "pending",
+          role: "driver"
         }
       ]);
       if (error) throw error;
-      document.getElementById('overlayText').textContent = 'Your submission has been completed. Please wait for the administrator to approve your badge.';
-      document.getElementById('overlay').classList.add('show);
-      document.getElementById('firstName').value = '';
-      document.getElementById('lastName').value = '';
-      document.getElementById('company').value = '';
+      document.getElementById("overlayText").textContent = "Your submission has been completed. Please wait for the administrator to approve your badge.";
+      document.getElementById("overlay").classList.add("show");
+      document.getElementById("firstName").value = "";
+      document.getElementById("lastName").value = "";
+      document.getElementById("company").value = "";
     } catch (err) {
-      msg.className = 'msg error';
-      msg.textContent = 'Error submitting profile: ' + err.message;
+      msg.className = "msg error";
+      msg.textContent = "Error submitting profile: " + err.message;
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Submit Profile & Request Badge';
+      btn.textContent = "Submit Profile & Request Badge";
     }
   }
 </script>
