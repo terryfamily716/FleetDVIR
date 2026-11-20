@@ -42,7 +42,6 @@
   .msg { display: none; padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; text-align: center; }
   .msg.success { background: #14532d; color: #4ade80; display: block; }
   .msg.pending { background: #78350f; color: #fcd34d; display: block; }
-  .visually-hidden-input { position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -84,7 +83,7 @@
           <div class="icon">&#128247;</div>
           <div class="hint">Tap to take or upload a selfie<br><span>Admin verifies your identity from this photo</span></div>
         </div>
-        <input type="file" id="selfieInput" class="visually-hidden-input" accept="image/*" capture="user" onchange="handleSelfie(event)">
+        <input type="file" id="selfieInput" accept="image/*" capture="user" style="display:none" onchange="handleSelfie(event)">
         <div class="selfie-preview" id="selfiePreview">
           <img id="selfieImg" src="" alt="Selfie preview">
           <button class="remove" onclick="removeSelfie()">Remove photo</button>
