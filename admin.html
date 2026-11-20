@@ -26,15 +26,14 @@
   .section h2 { font-size: 15px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
   .driver-card { background: #1a1f2e; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid #2d3748; }
   .driver-card .top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
-  .driver-card .avatar { width: 48px; height: 48px; border-radius: 50%; background: #0f1419; border: 2px solid #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-  .driver-card .info .name { font-size: 20px; font-weight: 700; }
-  .driver-card .info .meta { font-size: 14px; color: #9ca3af; margin-top: 2px; }
+  .driver-card .rank-box { width: 48px; height: 48px; border-radius: 50%; background: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: #0f1419; flex-shrink: 0; }
+  .driver-card .info .name { font-size: 22px; font-weight: 700; }
+  .driver-card .info .meta { font-size: 15px; color: #9ca3af; margin-top: 2px; }
   .driver-card .metrics { display: flex; gap: 10px; }
   .metric { flex: 1; background: #0f1419; border-radius: 8px; padding: 10px 8px; text-align: center; }
   .metric .val { font-size: 18px; font-weight: 700; color: #60a5fa; }
   .metric .lbl { font-size: 10px; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
   .online-dot { width: 10px; height: 10px; border-radius: 50%; background: #22c55e; display: inline-block; margin-right: 6px; }
-  .rank { font-size: 13px; font-weight: 700; color: #f59e0b; margin-right: 4px; }
   .pending-card { background: #1a1f2e; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid #2d3748; }
   .pending-card .name { font-size: 20px; font-weight: 700; }
   .pending-card .meta { font-size: 14px; color: #9ca3af; margin-top: 2px; margin-bottom: 14px; }
@@ -64,9 +63,9 @@
       <h2>Driver Activity — Ranked by Time Online</h2>
       <div class="driver-card">
         <div class="top">
-          <div class="avatar">&#128100;</div>
+          <div class="rank-box">1</div>
           <div class="info">
-            <div class="name"><span class="rank">#1</span><span class="online-dot"></span>Victor Delgado</div>
+            <div class="name"><span class="online-dot"></span>Victor Delgado</div>
             <div class="meta">Driver &bull; Ralph's Grocery &bull; Online 31 min</div>
           </div>
         </div>
@@ -79,9 +78,9 @@
       </div>
       <div class="driver-card">
         <div class="top">
-          <div class="avatar">&#128100;</div>
+          <div class="rank-box">2</div>
           <div class="info">
-            <div class="name"><span class="rank">#2</span><span class="online-dot"></span>Dispatch</div>
+            <div class="name"><span class="online-dot"></span>Dispatch</div>
             <div class="meta">Office &bull; Ralph's Grocery &bull; Online 22 min</div>
           </div>
         </div>
@@ -94,9 +93,9 @@
       </div>
       <div class="driver-card">
         <div class="top">
-          <div class="avatar">&#128100;</div>
+          <div class="rank-box">3</div>
           <div class="info">
-            <div class="name"><span class="rank">#3</span><span class="online-dot"></span>Marcus Ruiz</div>
+            <div class="name"><span class="online-dot"></span>Marcus Ruiz</div>
             <div class="meta">Driver &bull; Ralph's Grocery &bull; Online 14 min</div>
           </div>
         </div>
@@ -109,9 +108,9 @@
       </div>
       <div class="driver-card">
         <div class="top">
-          <div class="avatar">&#128100;</div>
+          <div class="rank-box">4</div>
           <div class="info">
-            <div class="name"><span class="rank">#4</span><span class="online-dot"></span>Rosa Torres</div>
+            <div class="name"><span class="online-dot"></span>Rosa Torres</div>
             <div class="meta">Driver &bull; Ralph's Grocery &bull; Online 8 min</div>
           </div>
         </div>
