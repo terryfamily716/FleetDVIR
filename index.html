@@ -35,7 +35,7 @@
   .cta { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
   .btn { padding: 16px; border-radius: 12px; border: none; font-size: 17px; font-weight: 600; cursor: pointer; text-decoration: none; text-align: center; display: block; }
   .btn-signin { background: #3b82f6; color: white; }
-  .btn-admin { background: #1e3a5f; color: #60a5fa; }
+  .btn-admin { background: #1a3a5f; color: #60a5fa; }
   .btn-signin:hover { background: #2563eb; }
   .btn-admin:hover { background: #243b55; }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -80,11 +80,11 @@
       </div>
       <div class="field">
         <label>Selfie Photo <span class="req">*</span></label>
-        <label class="selfie-box" id="selfieBox" for="selfieInput">
+        <div class="selfie-box" id="selfieBox" onclick="document.getElementById('selfieInput').click()">
           <div class="icon">&#128247;</div>
           <div class="hint">Tap to take or upload a selfie<br><span>Admin verifies your identity from this photo</span></div>
-        </label>
-        <input type="file" id="selfieInput" class="visually-hidden-input" accept="image/*" onchange="handleSelfie(event)">
+        </div>
+        <input type="file" id="selfieInput" class="visually-hidden-input" accept="image/*" capture="user" onchange="handleSelfie(event)">
         <div class="selfie-preview" id="selfiePreview">
           <img id="selfieImg" src="" alt="Selfie preview">
           <button class="remove" onclick="removeSelfie()">Remove photo</button>
@@ -148,7 +148,7 @@
     var btn = document.getElementById('submitBtn);
     btn.disabled = true;
     btn.textContent = 'Submitting...';
-    // Simulated submit - Firebase wiring comes next
+    // Simulated submit - Supabase wiring comes next
     setTimeout(function() {
       msg.className = 'msg pending';
       msg.textContent = 'Profile submitted for ' + first + ' ' + last + ' at ' + document.getElementById('company').options[document.getElementById('company').selectedIndex].text + '. Badge pending admin approval. You will be notified when your badge is issued.';
