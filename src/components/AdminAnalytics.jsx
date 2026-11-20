@@ -6,6 +6,7 @@ function AdminAnalytics() {
   const [drivers, setDrivers] = useState([]);
   const [dvirs, setDvirs] = useState([]);
   const [defects, setDefects] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -16,7 +17,7 @@ function AdminAnalytics() {
         setDrivers(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
       },
       (err) => setError(err.message)
-    );
+   );
     const unsubDvirs = onSnapshot(
       query(collection(db, 'dvirs'), orderBy('createdAt', 'desc')),
       (snap) => {
@@ -32,10 +33,18 @@ function AdminAnalytics() {
       },
       (err) => setError(err.message)
     );
+    const unsubMessages = onSnapshot(
+      collection(db, 'chat_messages'),
+      (snap) => {
+        setMessages(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      },
+      (err) => setError(err.message)
+    );
     return () => {
       unsubDrivers();
       unsubDvirs();
       unsubDefects();
+      unsubMessages();
     };
   }, []);
 
@@ -61,6 +70,7 @@ function AdminAnalytics() {
     const myDvirs = dvirs.filter((dv) => dv.driverId === d.id);
     const myDefects = defects.filter((df) => myDvirs.some((dv) => dv.id === df.dvirId));
     const resolved = myDefects.filter((df) => df.status === 'resolved').length;
+    const messagesSent = messages.filter((m) => m.senderId === d.id).length;
     return {
       name: d.firstName + ' ' + d.lastName,
       role: d.role,
@@ -68,6 +78,7 @@ function AdminAnalytics() {
       dvirs: myDvirs.length,
       defectsFound: myDefects.length,
       defectsResolved: resolved,
+      messagesSent,
     };
   });
 
@@ -107,13 +118,13 @@ function AdminAnalytics() {
       <table className="driver-table">
         <thead>
           <tr>
-            <th>Name</th><th>Role</th><th>Last Login</th><th>DVIRs</th><th>Defects Found</th><th>Defects Resolved</th>
+            <th>Name</th><th>Role</th><th>Last Login</th><th>DVIRs</th><th>Defects Found</th><th>Defects Resolved</th><th>Messages Sent</th>
           </tr>
         </thead>
         <tbody>
           {driverRows.map((row, i) => (
             <tr key={i} style={row.role === 'admin' ? { fontWeight: 'bold' } : {}}>
-              <td>{row.name}</td><td>{row.role}</td><td>{row.lastLogin}</td><td>{row.dvirs}</td><td>{row.defectsFound}</td><td>{row.defectsResolved}</td>
+              <td>{row.name}</td><td>{row.role}</td><td>{row.lastLogin}</td><td>{row.dvirs}</td><td>{row.defectsFound}</td><td>{row.defectsResolved}</td><td>{row.messagesSent}</td>
             </tr>
           ))}
         </tbody>
