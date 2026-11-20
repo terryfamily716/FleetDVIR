@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FleetDVIR - Admin Analytics</title>
+<title>FleetDVIR - Admin</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f1419; color: #e7e9ea; min-height: 100vh; }
@@ -11,6 +11,13 @@
   .header h1 { font-size: 20px; color: #3b82f6; }
   .header .admin-info { font-size: 14px; color: #9ca3af; }
   .back { color: #60a5fa; text-decoration: none; font-size: 14px; }
+  .toggle-bar { display: flex; gap: 0; padding: 16px 20px 0; }
+  .toggle-btn { flex: 1; padding: 12px; font-size: 15px; font-weight: 700; border: 1px solid #2d3748; background: #1a1f2e; color: #9ca3af; cursor: pointer; }
+  .toggle-btn.active { background: #3b82f6; color: #ffffff; border-color: #3b82f6; }
+  .toggle-btn:first-child { border-radius: 10px 0 0 10px; }
+  .toggle-btn:last-child { border-radius: 0 10px 10px 0; }
+  .view { display: none; }
+  .view.active { display: block; }
   .stats { display: flex; gap: 12px; padding: 20px 20px 0; }
   .stat { background: #1a1f2e; border-radius: 10px; padding: 12px 16px; flex: 1; text-align: center; }
   .stat .num { font-size: 22px; font-weight: 700; color: #3b82f6; }
@@ -28,81 +35,145 @@
   .metric .lbl { font-size: 10px; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
   .online-dot { width: 10px; height: 10px; border-radius: 50%; background: #22c55e; display: inline-block; margin-right: 6px; }
   .rank { font-size: 13px; font-weight: 700; color: #f59e0b; margin-right: 4px; }
+  .pending-card { background: #1a1f2e; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid #2d3748; }
+  .pending-card .name { font-size: 20px; font-weight: 700; }
+  .pending-card .meta { font-size: 14px; color: #9ca3af; margin-top: 2px; margin-bottom: 14px; }
+  .pending-card .actions { display: flex; gap: 10px; align-items: center; }
+  .role-select { flex: 1; background: #0f1419; color: #e7e9ea; border: 1px solid #2d3748; border-radius: 8px; padding: 10px; font-size: 14px; }
+  .btn-approve { background: #22c55e; color: #ffffff; border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .btn-reject { background: #ef4444; color: #ffffff; border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 700; cursor: pointer; }
 </style>
 </head>
 <body>
   <div class="header">
     <a class="back" href="dashboard.html">&larr; Dashboard</a>
-    <h1>Admin Analytics</h1>
+    <h1>Admin</h1>
     <div class="admin-info">Admin</div>
   </div>
-  <div class="stats">
-    <div class="stat"><div class="num" id="totalDvirs">47</div><div class="label">DVIRs Today</div></div>
-    <div class="stat"><div class="num" id="totalChats">23</div><div class="label">Chats Today</div></div>
-    <div class="stat"><div class="num" id="onlineNow">4</div><div class="label">Online Now</div></div>
+  <div class="toggle-bar">
+    <button class="toggle-btn active" onclick="showView('analytics')">Analytics</button>
+    <button class="toggle-btn" onclick="showView('approvals')">Approvals</button>
   </div>
-  <div class="section">
-    <h2>Driver Activity — Ranked by Time Online</h2>
-    <div class="driver-card">
-      <div class="top">
-        <div class="avatar">&#128100;</div>
-        <div class="info">
-          <div class="name"><span class="rank">#1</span><span class="online-dot"></span>Victor Delgado</div>
-          <div class="meta">Driver &bull; Ralph's Grocery &bull; Online 31 min</div>
-        </div>
-      </div>
-      <div class="metrics">
-        <div class="metric"><div class="val">4</div><div class="lbl">Pre-Trips</div></div>
-        <div class="metric"><div class="val">4</div><div class="lbl">Post-Trips</div></div>
-        <div class="metric"><div class="val">5</div><div class="lbl">Chats</div></div>
-        <div class="metric"><div class="val">1</div><div class="lbl">Defects</div></div>
-      </div>
+  <div id="analytics" class="view active">
+    <div class="stats">
+      <div class="stat"><div class="num" id="totalDvirs">47</div><div class="label">DVIRs Today</div></div>
+      <div class="stat"><div class="num" id="totalChats">23</div><div class="label">Chats Today</div></div>
+      <div class="stat"><div class="num" id="onlineNow">4</div><div class="label">Online Now</div></div>
     </div>
-    <div class="driver-card">
-      <div class="top">
-        <div class="avatar">&#128100;</div>
-        <div class="info">
-          <div class="name"><span class="rank">#2</span><span class="online-dot"></span>Dispatch</div>
-          <div class="meta">Office &bull; Ralph's Grocery &bull; Online 22 min</div>
+    <div class="section">
+      <h2>Driver Activity — Ranked by Time Online</h2>
+      <div class="driver-card">
+        <div class="top">
+          <div class="avatar">&#128100;</div>
+          <div class="info">
+            <div class="name"><span class="rank">#1</span><span class="online-dot"></span>Victor Delgado</div>
+            <div class="meta">Driver &bull; Ralph's Grocery &bull; Online 31 min</div>
+          </div>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="val">4</div><div class="lbl">Pre-Trips</div></div>
+          <div class="metric"><div class="val">4</div><div class="lbl">Post-Trips</div></div>
+          <div class="metric"><div class="val">5</div><div class="lbl">Chats</div></div>
+          <div class="metric"><div class="val">1</div><div class="lbl">Defects</div></div>
         </div>
       </div>
-      <div class="metrics">
-        <div class="metric"><div class="val">0</div><div class="lbl">Pre-Trips</div></div>
-        <div class="metric"><div class="val">0</div><div class="lbl">Post-Trips</div></div>
-        <div class="metric"><div class="val">12</div><div class="lbl">Chats</div></div>
-        <div class="metric"><div class="val">&mdash;</div><div class="lbl">Defects</div></div>
-      </div>
-    </div>
-    <div class="driver-card">
-      <div class="top">
-        <div class="avatar">&#128100;</div>
-        <div class="info">
-          <div class="name"><span class="rank">#3</span><span class="online-dot"></span>Marcus Ruiz</div>
-          <div class="meta">Driver &bull; Ralph's Grocery &bull; Online 14 min</div>
+      <div class="driver-card">
+        <div class="top">
+          <div class="avatar">&#128100;</div>
+          <div class="info">
+            <div class="name"><span class="rank">#2</span><span class="online-dot"></span>Dispatch</div>
+            <div class="meta">Office &bull; Ralph's Grocery &bull; Online 22 min</div>
+          </div>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="val">0</div><div class="lbl">Pre-Trips</div></div>
+          <div class="metric"><div class="val">0</div><div class="lbl">Post-Trips</div></div>
+          <div class="metric"><div class="val">12</div><div class="lbl">Chats</div></div>
+          <div class="metric"><div class="val">&mdash;</div><div class="lbl">Defects</div></div>
         </div>
       </div>
-      <div class="metrics">
-        <div class="metric"><div class="val">6</div><div class="lbl">Pre-Trips</div></div>
-        <div class="metric"><div class="val">5</div><div class="lbl">Post-Trips</div></div>
-        <div class="metric"><div class="val">9</div><div class="lbl">Chats</div></div>
-        <div class="metric"><div class="val">2</div><div class="lbl">Defects</div></div>
-      </div>
-    </div>
-    <div class="driver-card">
-      <div class="top">
-        <div class="avatar">&#128100;</div>
-        <div class="info">
-          <div class="name"><span class="rank">#4</span><span class="online-dot"></span>Rosa Torres</div>
-          <div class="meta">Driver &bull; Ralph's Grocery &bull; Online 8 min</div>
+      <div class="driver-card">
+        <div class="top">
+          <div class="avatar">&#128100;</div>
+          <div class="info">
+            <div class="name"><span class="rank">#3</span><span class="online-dot"></span>Marcus Ruiz</div>
+            <div class="meta">Driver &bull; Ralph's Grocery &bull; Online 14 min</div>
+          </div>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="val">6</div><div class="lbl">Pre-Trips</div></div>
+          <div class="metric"><div class="val">5</div><div class="lbl">Post-Trips</div></div>
+          <div class="metric"><div class="val">9</div><div class="lbl">Chats</div></div>
+          <div class="metric"><div class="val">2</div><div class="lbl">Defects</div></div>
         </div>
       </div>
-      <div class="metrics">
-        <div class="metric"><div class="val">3</div><div class="lbl">Pre-Trips</div></div>
-        <div class="metric"><div class="val">3</div><div class="lbl">Post-Trips</div></div>
-        <div class="metric"><div class="val">7</div><div class="lbl">Chats</div></div>
-        <div class="metric"><div class="val">0</div><div class="lbl">Defects</div></div>
+      <div class="driver-card">
+        <div class="top">
+          <div class="avatar">&#128100;</div>
+          <div class="info">
+            <div class="name"><span class="rank">#4</span><span class="online-dot"></span>Rosa Torres</div>
+            <div class="meta">Driver &bull; Ralph's Grocery &bull; Online 8 min</div>
+          </div>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="val">3</div><div class="lbl">Pre-Trips</div></div>
+          <div class="metric"><div class="val">3</div><div class="lbl">Post-Trips</div></div>
+          <div class="metric"><div class="val">7</div><div class="lbl">Chats</div></div>
+          <div class="metric"><div class="val">0</div><div class="lbl">Defects</div></div>
+        </div>
       </div>
     </div>
   </div>
+  <div id="approvals" class="view">
+    <div class="stats">
+      <div class="stat"><div class="num">2</div><div class="label">Pending</div></div>
+      <div class="stat"><div class="num">14</div><div class="label">Approved</div></div>
+      <div class="stat"><div class="num">1</div><div class="label">Rejected</div></div>
+    </div>
+    <div class="section">
+      <h2>Pending Badge Requests</h2>
+      <div class="pending-card">
+        <div class="name">Marcus Ruiz</div>
+        <div class="meta">Driver &bull; Ralph's Grocery &bull; Requested 2 hours ago</div>
+        <div class="actions">
+          <select class="role-select">
+            <option value="driver">Driver</option>
+            <option value="supervisor">Supervisor</option>
+            <option value="shop">Shop</option>
+            <option value="shop_steward">Shop Steward</option>
+            <option value="admin">Admin</option>
+          </select>
+          <button class="btn-approve" onclick="alert('Approved Marcus Ruiz as Driver')">Approve</button>
+          <button class="btn-reject" onclick="alert('Rejected Marcus Ruiz')">Reject</button>
+        </div>
+      </div>
+      <div class="pending-card">
+        <div class="name">Victor Delgado</div>
+        <div class="meta">Driver &bull; Ralph's Grocery &bull; Requested 5 hours ago</div>
+        <div class="actions">
+          <select class="role-select">
+            <option value="driver">Driver</option>
+            <option value="supervisor">Supervisor</option>
+            <option value="shop">Shop</option>
+            <option value="shop_steward">Shop Steward</option>
+            <option value="admin">Admin</option>
+          </select>
+          <button class="btn-approve" onclick="alert('Approved Victor Delgado as Driver')">Approve</button>
+          <button class="btn-reject" onclick="alert('Rejected Victor Delgado')">Reject</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+function showView(view) {
+  document.getElementById("analytics").classList.remove("active");
+  document.getElementById("approvals").classList.remove("active");
+  document.getElementById(view).classList.add("active");
+  var buttons = document.querySelectorAll(".toggle-btn");
+  buttons.forEach(function(btn) { btn.classList.remove("active"); });
+  if (view === "analytics") { buttons[0].classList.add("active"); }
+  else { buttons[1].classList.add("active"); }
+}
+</script>
 </body>
 </html>
