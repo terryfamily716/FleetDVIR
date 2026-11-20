@@ -27,7 +27,7 @@
   .metric .val { font-size: 18px; font-weight: 700; color: #60a5fa; }
   .metric .lbl { font-size: 10px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
   .online-dot { width: 10px; height: 10px; border-radius: 50%; background: #22c55e; display: inline-block; margin-right: 6px; }
-  .offline-dot { width: 10px; height: 10px; border-radius: 50%; background: #6b7280; display: inline-block; margin-right: 6px; }
+  .rank { font-size: 13px; font-weight: 700; color: #f59e0b; margin-right: 4px; }
 </style>
 </head>
 <body>
@@ -42,27 +42,12 @@
     <div class="stat"><div class="num" id="onlineNow">4</div><div class="label">Online Now</div></div>
   </div>
   <div class="section">
-    <h2>Driver Activity</h2>
+    <h2>Driver Activity — Ranked by Time Online</h2>
     <div class="driver-card">
       <div class="top">
         <div class="avatar">&#128100;</div>
         <div class="info">
-          <div class="name"><span class="online-dot"></span>Marcus Ruiz</div>
-          <div class="meta">Driver &bull; Ralph's Grocery &bull; Online 14 min</div>
-        </div>
-      </div>
-      <div class="metrics">
-        <div class="metric"><div class="val">6</div><div class="lbl">Pre-Trips</div></div>
-        <div class="metric"><div class="val">5</div><div class="lbl">Post-Trips</div></div>
-        <div class="metric"><div class="val">9</div><div class="lbl">Chats</div></div>
-        <div class="metric"><div class="val">2</div><div class="lbl">Defects</div></div>
-      </div>
-    </div>
-    <div class="driver-card">
-      <div class="top">
-        <div class="avatar">&#128100;</div>
-        <div class="info">
-          <div class="name"><span class="online-dot"></span>Victor Delgado</div>
+          <div class="name"><span class="rank">#1</span><span class="online-dot"></span>Victor Delgado</div>
           <div class="meta">Driver &bull; Ralph's Grocery &bull; Online 31 min</div>
         </div>
       </div>
@@ -77,22 +62,7 @@
       <div class="top">
         <div class="avatar">&#128100;</div>
         <div class="info">
-          <div class="name"><span class="online-dot"></span>Rosa Torres</div>
-          <div class="meta">Driver &bull; Ralph's Grocery &bull; Online 8 min</div>
-        </div>
-      </div>
-      <div class="metrics">
-        <div class="metric"><div class="val">3</div><div class="lbl">Pre-Trips</div></div>
-        <div class="metric"><div class="val">3</div><div class="lbl">Post-Trips</div></div>
-        <div class="metric"><div class="val">7</div><div class="lbl">Chats</div></div>
-        <div class="metric"><div class="val">0</div><div class="lbl">Defects</div></div>
-      </div>
-    </div>
-    <div class="driver-card">
-      <div class="top">
-        <div class="avatar">&#128100;</div>
-        <div class="info">
-          <div class="name"><span class="online-dot"></span>Dispatch</div>
+          <div class="name"><span class="rank">#2</span><span class="online-dot"></span>Dispatch</div>
           <div class="meta">Office &bull; Ralph's Grocery &bull; Online 22 min</div>
         </div>
       </div>
@@ -101,6 +71,36 @@
         <div class="metric"><div class="val">0</div><div class="lbl">Post-Trips</div></div>
         <div class="metric"><div class="val">12</div><div class="lbl">Chats</div></div>
         <div class="metric"><div class="val">&mdash;</div><div class="lbl">Defects</div></div>
+      </div>
+    </div>
+    <div class="driver-card">
+      <div class="top">
+        <div class="avatar">&#128100;</div>
+        <div class="info">
+          <div class="name"><span class="rank">#3</span><span class="online-dot"></span>Marcus Ruiz</div>
+          <div class="meta">Driver &bull; Ralph's Grocery &bull; Online 14 min</div>
+        </div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="val">6</div><div class="lbl">Pre-Trips</div></div>
+        <div class="metric"><div class="val">5</div><div class="lbl">Post-Trips</div></div>
+        <div class="metric"><div class="val">9</div><div class="lbl">Chats</div></div>
+        <div class="metric"><div class="val">2</div><div class="lbl">Defects</div></div>
+      </div>
+    </div>
+    <div class="driver-card">
+      <div class="top">
+        <div class="avatar">&#128100;</div>
+        <div class="info">
+          <div class="name"><span class="rank">#4</span><span class="online-dot"></span>Rosa Torres</div>
+          <div class="meta">Driver &bull; Ralph's Grocery &bull; Online 8 min</div>
+        </div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="val">3</div><div class="lbl">Pre-Trips</div></div>
+        <div class="metric"><div class="val">3</div><div class="lbl">Post-Trips</div></div>
+        <div class="metric"><div class="val">7</div><div class="lbl">Chats</div></div>
+        <div class="metric"><div class="val">0</div><div class="lbl">Defects</div></div>
       </div>
     </div>
   </div>
