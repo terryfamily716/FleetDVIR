@@ -11,8 +11,6 @@
   .header { background: #1a1f2e; padding: 20px; text-align: center; border-bottom: 1px solid #2d3748; }
   .header h1 { font-size: 32px; color: #3b82f6; letter-spacing: 1px; }
   .header .tagline { font-size: 15px; color: #9ca3af; margin-top: 6px; }
-  .header .bidday-link { display: inline-block; margin-top: 12px; padding: 8px 16px; background: #0d0d0d; border: 2px solid #ef4444; border-radius: 8px; color: #60a5fa; text-decoration: none; font-size: 14px; font-weight: 700; }
-  .header .bidday-link:active { background: #1a1a1a; }
   .main { flex: 1; max-width: 520px; width: 100%; margin: 0 auto; padding: 24px 20px; }
   .features { list-style: none; margin-bottom: 28px; }
   .features li { background: #1a1f2e; border-radius: 12px; padding: 14px 18px; margin-bottom: 10px; font-size: 14px; color: #e7e9ea; border-left: 4px solid #3b82f6; text-align: left; }
@@ -24,7 +22,7 @@
   .field label .req { color: #ef4444; }
   .field input[type="text"], .field select { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #2d3748; background: #0f1419; color: #e7e9ea; font-size: 15px; }
   .field input[type="text"]:focus, .field select:focus { outline: none; border-color: #3b82f6; }
-  .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239ca3af' d='M1.41 0L6 4.58L10.59 0L12 1.41l-6 6l-6-6L1.41 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewView='0 0 12 8'%3E%3Cpath fill='%239ca3af' d='M1.41 0L6 4.58L10.59 0L12 1.41l-6 6l-6-6L1.41 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
   .badge-note { font-size: 12px; color: #6b7280; margin-top: 10px; line-height: 1.5; }
   .badge-note span { color: #f59e0b; }
   .cta { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
@@ -38,13 +36,18 @@
   .msg.success { background: #14532d; color: #4ade80; display: block; }
   .msg.pending { background: #78350f; color: #fcd34d; display: block; }
   .msg.error { background: #7f1d1d; color: #fca5a5; display: block; }
+  .overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 24px; }
+  .overlay.show { display: flex; }
+  .overlay-box { background: #1a1f2e; border-radius: 16px; padding: 32px 24px; max-width: 400px; width: 100%; text-align: center; border: 1px solid #2d3748; }
+  .overlay-box h2 { font-size: 20px; color: #4ade80; margin-bottom: 16px; }
+  .overlay-box p { font-size: 15px; color: #e7e9ea; line-height: 1.6; margin-bottom: 24px; }
+  .overlay-box .btn { background: #3b82f6; color: white; }
 </style>
 </head>
 <body>
   <div class="header">
     <h1>FleetDVIR</h1>
     <div class="tagline">Digital inspection reports for trucking fleets</div>
-    <a class="bidday-link" href="https://terryfamily716.github.io/Ralphs-Drivers-Bid-Day">Bid Day Live &rarr;</a>
   </div>
   <div class="main">
     <ul class="features">
@@ -83,11 +86,24 @@
       <a class="btn btn-admin" href="dashboard.html">Admin Analytics</a>
     </div>
   </div>
+
+  <div class="overlay" id="overlay">
+    <div class="overlay-box">
+      <h2>Submission Complete</h2>
+      <p id="overlayText">Your submission has been completed. Please wait for the administrator to approve your badge.</p>
+      <button class="btn" onclick="closeOverlay()">OK</button>
+    </div>
+  </div>
+
 <script>
   var SUPABASE_URL = 'https://wrcojseshbjowilmhaou.supabase.co';
   var SUPABASE_ANON_KEY = 'sb_publishable_R7BoVxY23UbARLhFoVMBxg_wJllvQgp';
   var { createClient } = supabase;
   var sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  function closeOverlay() {
+    document.getElementById('overlay').classList.remove('show);
+  }
 
   async function submitProfile() {
     var first = document.getElementById('firstName').value.trim();
@@ -120,9 +136,11 @@
         }
       ]);
       if (error) throw error;
-      var companyText = document.getElementById('company').options[document.getElementById('company').selectedIndex].text;
-      msg.className = 'msg pending';
-      msg.textContent = 'Profile submitted for ' + first + ' ' + last + ' at ' + companyText + '. Badge pending admin approval. You will be notified when your badge is issued.';
+      document.getElementById('overlayText').textContent = 'Your submission has been completed. Please wait for the administrator to approve your badge.';
+      document.getElementById('overlay').classList.add('show);
+      document.getElementById('firstName').value = '';
+      document.getElementById('lastName').value = '';
+      document.getElementById('company').value = '';
     } catch (err) {
       msg.className = 'msg error';
       msg.textContent = 'Error submitting profile: ' + err.message;
