@@ -24,14 +24,25 @@
   .field input[type="text"], .field input[type="email"], .field input[type="password"], .field select { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #2d3748; background: #0f1419; color: #e7e9ea; font-size: 15px; }
   .field input[type="text"]:focus, .field input[type="email"]:focus, .field input[type="password"]:focus, .field select:focus { outline: none; border-color: #3b82f6; }
   .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239ca3af' d='M1.41 0L6 4.58L10.59 0L12 1.41l-6 6l-6-6L1.41 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
-  .photo-area { border: 2px dashed #2d3748; border-radius: 12px; padding: 28px 16px; text-align: center; cursor: pointer; background: #0f1419; transition: border-color 0.2s; }
-  .photo-area:hover { border-color: #3b82f6; }
-  .photo-area p { font-size: 13px; color: #6b7280; }
-  .photo-area .plus { font-size: 28px; color: #3b82f6; margin-bottom: 6px; }
-  .photo-thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
-  .photo-thumb { position: relative; width: 72px; height: 72px; border-radius: 8px; overflow: hidden; border: 1px solid #2d3748; }
-  .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
-  .photo-thumb .remove { position: absolute; top: 2px; right: 2px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 13px; cursor: pointer; line-height: 18px; }
+  .selfie-capture { background: #0f1419; border-radius: 12px; border: 1px solid #2d3748; overflow: hidden; }
+  .selfie-video-wrap { position: relative; width: 100%; aspect-ratio: 1; background: #000; display: flex; align-items: center; justify-content: center; }
+  .selfie-video-wrap video { width: 100%; height: 100%; object-fit: cover; }
+  .selfie-face-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; aspect-ratio: 1; border: 3px solid #3b82f6; border-radius: 50%; box-shadow: 0 0 0 9999px rgba(0,0,0,0.55); pointer-events: none; }
+  .selfie-face-guide::after { content: "Align face in circle"; position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%); color: #9ca3af; font-size: 12px; white-space: nowrap; }
+  .selfie-controls { display: flex; gap: 10px; padding: 12px; }
+  .selfie-controls button { flex: 1; padding: 12px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .btn-open-cam { background: #3b82f6; color: white; }
+  .btn-open-cam:hover { background: #2563eb; }
+  .btn-upload { background: #1a1f2e; color: #60a5fa; border: 1px solid #2d3748; }
+  .btn-upload:hover { background: #243b55; }
+  .selfie-preview { display: none; padding: 12px; text-align: center; }
+  .selfie-preview img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #3b82f6; }
+  .selfie-preview .preview-actions { display: flex; gap: 10px; margin-top: 12px; }
+  .selfie-preview .preview-actions button { flex: 1; padding: 10px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-retake { background: #ef4444; color: white; }
+  .btn-retake:hover { background: #dc2626; }
+  .btn-keep { background: #14532d; color: #4ade80; }
+  .btn-keep:hover { background: #166534; }
   .badge-note { font-size: 12px; color: #6b7280; margin-top: 10px; line-height: 1.5; }
   .badge-note span { color: #f59e0b; }
   .cta { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
@@ -57,7 +68,7 @@
   <div class="header">
     <h1>FleetDVIR</h1>
     <div class="tagline">Digital inspection reports for trucking fleets</div>
-    <div class="version">11.21.26 V0.03</div>
+    <div class="version">11.21.26 V0.04</div>
   </div>
   <div class="main">
     <ul class="features">
@@ -97,15 +108,26 @@
       </div>
       <div class="field">
         <label>Selfie Photo <span class="req">*</span></label>
-        <div class="photo-area" id="photoArea" onclick="document.getElementById('selfieInput').click()">
-          <div class="plus">+</div>
-          <p>Tap to take or upload selfie</p>
-          <p>Max 5 MB. Admin verifies identity before badge approval.</p>
+        <div class="selfie-capture" id="selfieCapture">
+          <div class="selfie-video-wrap" id="videoWrap">
+            <video id="selfieVideo" autoplay playsinline muted></video>
+            <div class="selfie-face-guide" id="faceGuide"></div>
+          </div>
+          <div class="selfie-controls">
+            <button class="btn-open-cam" id="openCamBtn" onclick="openCamera()">Open Camera</button>
+            <button class="btn-upload" onclick="document.getElementById('selfieFileInput').click()">Upload Photo</button>
+          </div>
+          <input type="file" id="selfieFileInput" accept="image/*" style="display:none" onchange="handleFileUpload(event)">
+          <div class="selfie-preview" id="selfiePreview">
+            <img id="previewImg" src="" alt="Selfie preview">
+            <div class="preview-actions">
+              <button class="btn-retake" onclick="retakeSelfie()">Retake</button>
+              <button class="btn-keep" onclick="keepSelfie()">Keep Photo</button>
+            </div>
+          </div>
         </div>
-        <input type="file" id="selfieInput" accept="image/*" capture="user" style="display:none" onchange="handleSelfie(event)">
-        <div class="photo-thumbs" id="photoThumbs"></div>
+        <div class="badge-note"><span>&#9888; Badge required:</span> After you submit, your profile goes to pending. Admin reviews your selfie and issues your badge manually. No badge means no DVIR access, chat, or PDF downloads. Your company selection determines which DVIRs you can access.</div>
       </div>
-      <div class="badge-note"><span>&#9888; Badge required:</span> After you submit, your profile goes to pending. Admin reviews your selfie and issues your badge manually. No badge means no DVIR access, chat, or PDF downloads. Your company selection determines which DVIRs you can access.</div>
     </div>
 
     <div class="cta">
@@ -128,14 +150,48 @@
   var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyY29qc2VzaGJqb3dpbG1oYW91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUxNTEwMDAsImV4cCI6MjExMDcyNzAwMH0.pDb_2DxRub_GLQUg-BZKj507LzuDRMWiQaJN3SajB5s";
   var { createClient } = supabase;
   var sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  var selfieFile = null;
   var selfieDataUrl = null;
+  var stream = null;
 
   function closeOverlay() {
     document.getElementById("overlay").classList.remove("show");
   }
 
-  function handleSelfie(event) {
+  async function openCamera() {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+      var video = document.getElementById("selfieVideo");
+      video.srcObject = stream;
+      document.getElementById("faceGuide").style.display = "block";
+      var openBtn = document.getElementById("openCamBtn");
+      openBtn.textContent = "Capture Photo";
+      openBtn.onclick = capturePhoto;
+    } catch (err) {
+      alert("Camera access denied. Please allow camera permission or upload a photo instead.");
+    }
+  }
+
+  function capturePhoto() {
+    var video = document.getElementById("selfieVideo");
+    var canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0);
+    var dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+    if (stream) {
+      stream.getTracks().forEach(function(t) { t.stop(); });
+      stream = null;
+    }
+    video.srcObject = null;
+    document.getElementById("faceGuide").style.display = "none";
+    var openBtn = document.getElementById("openCamBtn");
+    openBtn.textContent = "Open Camera";
+    openBtn.onclick = openCamera;
+    showPreview(dataUrl);
+  }
+
+  function handleFileUpload(event) {
     var file = event.target.files[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
@@ -143,32 +199,43 @@
       event.target.value = "";
       return;
     }
-    selfieFile = file;
     var reader = new FileReader();
-    reader.onclick = null;
     reader.onload = function(e) {
-      selfieDataUrl = e.target.result;
-      var thumbs = document.getElementById("photoThumbs");
-      thumbs.innerHTML = "";
-      var thumb = document.createElement("div");
-      thumb.className = "photo-thumb";
-      var img = document.createElement("img");
-      img.src = selfieDataUrl;
-      var removeBtn = document.createElement("button");
-      removeBtn.className = "remove";
-      removeBtn.textContent = "x";
-      removeBtn.onclick = function(ev) {
-        ev.stopPropagation();
-        selfieFile = null;
-        selfieDataUrl = null;
-        thumbs.innerHTML = "";
-        document.getElementById("selfieInput").value = "";
-      };
-      thumb.appendChild(img);
-      thumb.appendChild(removeBtn);
-      thumbs.appendChild(thumb);
+      showPreview(e.target.result);
     };
     reader.readAsDataURL(file);
+  }
+
+  function showPreview(dataUrl) {
+    selfieDataUrl = dataUrl;
+    document.getElementById("previewImg").src = dataUrl;
+    document.getElementById("selfiePreview").style.display = "block";
+    document.getElementById("videoWrap").style.display = "none";
+    document.querySelector(".selfie-controls").style.display = "none";
+  }
+
+  function retakeSelfie() {
+    selfieDataUrl = null;
+    document.getElementById("selfiePreview").style.display = "none";
+    document.getElementById("videoWrap").style.display = "flex";
+    document.querySelector(".selfie-controls").style.display = "flex";
+    document.getElementById("selfieFileInput").value = "";
+  }
+
+  function keepSelfie() {
+    document.getElementById("selfiePreview").style.display = "none";
+  }
+
+  function dataURLtoFile(dataUrl, filename) {
+    var arr = dataUrl.split(",");
+    var mime = arr[0].match(/:(.*?);/)[1];
+    var bstr = atob(arr[1]);
+    var n = bstr.length;
+    var u8arr = new Uint8Array(n);
+    for (var i = 0; i < n; i++) {
+      u8arr[i] = bstr.charCodeAt(i);
+    }
+    return new File([u8arr], filename, { type: mime });
   }
 
   async function submitProfile() {
@@ -196,7 +263,7 @@
       alert("Please select your company.");
       return;
     }
-    if (!selfieFile || !selfieDataUrl) {
+    if (!selfieDataUrl) {
       alert("Selfie photo is required.");
       return;
     }
@@ -209,6 +276,7 @@
       var { data: authData, error: authError } = await sb.auth.signUp({ email: email, password: password });
       if (authError) throw authError;
       var userId = authData.user.id;
+      var selfieFile = dataURLtoFile(selfieDataUrl, "selfie.jpg");
       var filePath = userId + "/selfie.jpg";
       var { error: uploadError } = await sb.storage.from("selfies").upload(filePath, selfieFile, { upsert: true });
       if (uploadError) throw uploadError;
@@ -233,10 +301,7 @@
       document.getElementById("firstName").value = "";
       document.getElementById("lastName").value = "";
       document.getElementById("company").value = "";
-      selfieFile = null;
-      selfieDataUrl = null;
-      document.getElementById("photoThumbs").innerHTML = "";
-      document.getElementById("selfieInput").value = "";
+      retakeSelfie();
     } catch (err) {
       msg.className = "msg error";
       msg.textContent = "Error submitting profile: " + err.message;
