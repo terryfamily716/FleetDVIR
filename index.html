@@ -21,9 +21,17 @@
   .field { margin-bottom: 16px; }
   .field label { display: block; font-size: 13px; color: #9ca3af; margin-bottom: 6px; font-weight: 600; }
   .field label .req { color: #ef4444; }
-  .field input[type="text"], .field select { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #2d3748; background: #0f1419; color: #e7e9ea; font-size: 15px; }
-  .field input[type="text"]:focus, .field select:focus { outline: none; border-color: #3b82f6; }
+  .field input[type="text"], .field input[type="email"], .field input[type="password"], .field select { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #2d3748; background: #0f1419; color: #e7e9ea; font-size: 15px; }
+  .field input[type="text"]:focus, .field input[type="email"]:focus, .field input[type="password"]:focus, .field select:focus { outline: none; border-color: #3b82f6; }
   .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239ca3af' d='M1.41 0L6 4.58L10.59 0L12 1.41l-6 6l-6-6L1.41 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  .photo-area { border: 2px dashed #2d3748; border-radius: 12px; padding: 28px 16px; text-align: center; cursor: pointer; background: #0f1419; transition: border-color 0.2s; }
+  .photo-area:hover { border-color: #3b82f6; }
+  .photo-area p { font-size: 13px; color: #6b7280; }
+  .photo-area .plus { font-size: 28px; color: #3b82f6; margin-bottom: 6px; }
+  .photo-thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .photo-thumb { position: relative; width: 72px; height: 72px; border-radius: 8px; overflow: hidden; border: 1px solid #2d3748; }
+  .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-thumb .remove { position: absolute; top: 2px; right: 2px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 13px; cursor: pointer; line-height: 18px; }
   .badge-note { font-size: 12px; color: #6b7280; margin-top: 10px; line-height: 1.5; }
   .badge-note span { color: #f59e0b; }
   .cta { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
@@ -65,6 +73,14 @@
     <div class="profile-card">
       <div id="msg" class="msg"></div>
       <div class="field">
+        <label>Email <span class="req">*</span></label>
+        <input type="email" id="email" placeholder="Enter email address">
+      </div>
+      <div class="field">
+        <label>Password <span class="req">*</span></label>
+        <input type="password" id="password" placeholder="Minimum 8 characters" minlength="8">
+      </div>
+      <div class="field">
         <label>First Name <span class="req">*</span></label>
         <input type="text" id="firstName" placeholder="Enter first name">
       </div>
@@ -79,7 +95,17 @@
           <option value="ralphs">Ralph's Grocery</option>
         </select>
       </div>
-      <div class="badge-note"><span>&#9888; Badge required:</span> After you submit, your profile goes to pending. Admin reviews and issues your badge manually. No badge means no DVIR access, chat, or PDF downloads. Your company selection determines which DVIRs you can access.</div>
+      <div class="field">
+        <label>Selfie Photo <span class="req">*</span></label>
+        <div class="photo-area" id="photoArea" onclick="document.getElementById('selfieInput').click()">
+          <div class="plus">+</div>
+          <p>Tap to take or upload selfie</p>
+          <p>Max 5 MB. Admin verifies identity before badge approval.</p>
+        </div>
+        <input type="file" id="selfieInput" accept="image/*" capture="user" style="display:none" onchange="handleSelfie(event)">
+        <div class="photo-thumbs" id="photoThumbs"></div>
+      </div>
+      <div class="badge-note"><span>&#9888; Badge required:</span> After you submit, your profile goes to pending. Admin reviews your selfie and issues your badge manually. No badge means no DVIR access, chat, or PDF downloads. Your company selection determines which DVIRs you can access.</div>
     </div>
 
     <div class="cta">
@@ -102,16 +128,63 @@
   var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyY29qc2VzaGJqb3dpbG1oYW91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUxNTEwMDAsImV4cCI6MjExMDcyNzAwMH0.pDb_2DxRub_GLQUg-BZKj507LzuDRMWiQaJN3SajB5s";
   var { createClient } = supabase;
   var sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  var selfieFile = null;
+  var selfieDataUrl = null;
 
   function closeOverlay() {
     document.getElementById("overlay").classList.remove("show");
   }
 
+  function handleSelfie(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Selfie must be 5 MB or smaller.");
+      event.target.value = "";
+      return;
+    }
+    selfieFile = file;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      selfieDataUrl = e.target.result;
+      var thumbs = document.getElementById("photoThumbs");
+      thumbs.innerHTML = "";
+      var thumb = document.createElement("div");
+      thumb.className = "photo-thumb";
+      var img = document.createElement("img");
+      img.src = selfieDataUrl;
+      var removeBtn = document.createElement("button");
+      removeBtn.className = "remove";
+      removeBtn.textContent = "x";
+      removeBtn.onclick = function(ev) {
+        ev.stopPropagation();
+        selfieFile = null;
+        selfieDataUrl = null;
+        thumbs.innerHTML = "";
+        document.getElementById("selfieInput").value = "";
+      };
+      thumb.appendChild(img);
+      thumb.appendChild(removeBtn);
+      thumbs.appendChild(thumb);
+    };
+    reader.readAsDataURL(file);
+  }
+
   async function submitProfile() {
+    var email = document.getElementById("email").value.trim();
+    var password = document.getElementById("password").value;
     var first = document.getElementById("firstName").value.trim();
     var last = document.getElementById("lastName").value.trim();
     var company = document.getElementById("company").value;
     var msg = document.getElementById("msg");
+    if (!email) {
+      alert("Email is required.");
+      return;
+    }
+    if (password.length < 8) {
+      alert("Password must be at least 8 characters.");
+      return;
+    }
     if (!first || !last) {
       msg.className = "msg";
       msg.textContent = "";
@@ -122,27 +195,47 @@
       alert("Please select your company.");
       return;
     }
+    if (!selfieFile || !selfieDataUrl) {
+      alert("Selfie photo is required.");
+      return;
+    }
     var btn = document.getElementById("submitBtn");
     btn.disabled = true;
     btn.textContent = "Submitting...";
     msg.className = "msg";
     msg.textContent = "";
     try {
-      var { error } = await sb.from("profiles").insert([
+      var { data: authData, error: authError } = await sb.auth.signUp({ email: email, password: password });
+      if (authError) throw authError;
+      var userId = authData.user.id;
+      var filePath = userId + "/selfie.jpg";
+      var { error: uploadError } = await sb.storage.from("selfies").upload(filePath, selfieFile, { upsert: true });
+      if (uploadError) throw uploadError;
+      var { data: urlData } = sb.storage.from("selfies").getPublicUrl(filePath);
+      var selfieUrl = urlData.publicUrl;
+      var { error: insertError } = await sb.from("profiles").insert([
         {
+          id: userId,
           first_name: first,
           last_name: last,
           company: company,
+          selfie_url: selfieUrl,
           badge_status: "pending",
           role: "driver"
         }
       ]);
-      if (error) throw error;
+      if (insertError) throw insertError;
       document.getElementById("overlayText").textContent = "Your submission has been completed. Please wait for the administrator to approve your badge.";
       document.getElementById("overlay").classList.add("show");
+      document.getElementById("email").value = "";
+      document.getElementById("password").value = "";
       document.getElementById("firstName").value = "";
       document.getElementById("lastName").value = "";
       document.getElementById("company").value = "";
+      selfieFile = null;
+      selfieDataUrl = null;
+      document.getElementById("photoThumbs").innerHTML = "";
+      document.getElementById("selfieInput").value = "";
     } catch (err) {
       msg.className = "msg error";
       msg.textContent = "Error submitting profile: " + err.message;
