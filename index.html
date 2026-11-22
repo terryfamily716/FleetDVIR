@@ -47,7 +47,7 @@
   <div class="header">
     <h1>FleetDVIR</h1>
     <div class="tagline">Digital inspection reports for trucking fleets</div>
-    <div class="version">11.22.26 V0.07</div>
+    <div class="version">11.22.26 V0.08</div>
   </div>
   <div class="main">
     <ul class="features">
@@ -132,14 +132,14 @@
           "X-Appwrite-Project": APPWRITE_PROJECT,
           "X-Appwrite-Key": APPWRITE_KEY
         },
-        body: JSON.stringify([
+        body: JSON.stringify({
           "first-name": first,
           "last-name": last,
           "company": company,
           "badge-status": "pending",
           "role": "driver",
           "created-at": new Date().toISOString()
-        ])
+        })
       });
       if (!res.ok) {
         var errBody = await res.text();
