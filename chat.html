@@ -52,6 +52,8 @@
   .bottom-btns { display: flex; gap: 10px; margin: 12px 16px; }
   .new-group-btn, .new-dm-btn { flex: 1; background: #1a1f2e; border: 1px dashed #3b82f6; color: #60a5fa; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; }
   .new-group-btn:hover, .new-dm-btn:hover { background: #1e3a5f; }
+  .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #6b7280; font-size: 14px; gap: 8px; }
+  .error-banner { background: #7f1d1d; color: #fca5a5; padding: 10px 16px; font-size: 13px; display: none; }
   @media (max-width: 600px) {
     .conv-list { width: 100%; display: none; }
     .conv-list.mobile-show { display: block; }
@@ -65,74 +67,195 @@
       <a class="dash-link" href="dashboard.html">&#8592; Dashboard</a>
       <h1>FleetDVIR</h1>
     </div>
-    <div class="driver-info">Larry Terry<br>Badge #1042</div>
+    <div class="driver-info" id="driverInfo">Loading...</div>
   </div>
   <div class="top-buttons">
     <button class="btn btn-dvir" onclick="location.href='dashboard.html'">Create DVIR</button>
-    <button class="btn btn-chat">Chat<span class="badge">1</span></button>
+    <button class="btn btn-chat">Chat<span class="badge" id="chatBadge">0</span></button>
   </div>
+  <div class="error-banner" id="errorBanner"></div>
   <div class="chat-layout">
-    <div class="conv-list">
+    <div class="conv-list" id="convList">
       <div class="online-section">
         <h3>Online Now</h3>
-        <div class="online-person"><span class="online-dot"></span>Marcus Ruiz<span class="ago">online 14 min</span></div>
-        <div class="online-person"><span class="online-dot"></span>Victor Delgado<span class="ago">online 2 min</span></div>
-        <div class="online-person"><span class="online-dot"></span>Rosa Torres<span class="ago">online 5 min</span></div>
-        <div class="online-person"><span class="online-dot"></span>Dispatch<span class="ago">online 1 min</span></div>
+        <div id="onlineList"><div class="online-person" style="color:#6b7280">Loading...</div></div>
       </div>
       <button class="directory-btn" onclick="location.href='directory.html'">Directory</button>
-      <div class="conv-item active">
-        <span class="time">2m</span>
-        <div class="name"><span class="dot"></span>Riverside Night Crew <span class="unread">1</span></div>
-        <div class="preview">Marcus: Brake check on 9021 done, mechanic signed off</div>
-      </div>
-      <div class="conv-item">
-        <span class="time">1h</span>
-        <div class="name"><span class="dot"></span>Victor Delgado</div>
-        <div class="preview">You: Copy that, see you at the dock</div>
-      </div>
-      <div class="conv-item">
-        <span class="time">3h</span>
-        <div class="name"><span class="dot offline"></span>Shop Team</div>
-        <div class="preview">Rosa: Tractor 8847 ready for pickup</div>
-      </div>
-      <div class="conv-item">
-        <span class="time">Yesterday</span>
-        <div class="name"><span class="dot offline"></span>All Drivers - Riverside</div>
-        <div class="preview">Admin: Bid Day is Feb 2024, check the live sheet</div>
-      </div>
+      <div id="convItems"></div>
       <div class="bottom-btns">
-        <button class="new-group-btn">+ New Group</button>
+        <button class="new-group-btn" onclick="alert('Group creation coming soon')">+ New Group</button>
         <button class="new-dm-btn" onclick="location.href='directory.html'">+ New DM</button>
       </div>
     </div>
-    <div class="thread">
-      <div class="thread-header"><span class="dot"></span>Riverside Night Crew<span class="status">Marcus is typing...</span></div>
-      <div class="messages">
-        <div class="msg them">
-          <div class="sender">Marcus Ruiz</div>
-          Brake air leak on 9021 is fixed. Mechanic Torres signed off at 3:40 AM.
-          <div class="time">11:52 PM</div>
-        </div>
-        <div class="msg me">
-          Good, that was the out-of-service one. Appreciate the heads up.
-          <div class="time">11:54 PM</div>
-        </div>
-        <div class="msg them">
-          <div class="sender">Marcus Ruiz</div>
-          Also, dispatch is adding a third trailer to your route tonight. 4417.
-          <div class="time">12:01 AM</div>
-        </div>
-        <div class="msg me">
-          Roger. I'll note it on the DVIR.
-          <div class="time">12:02 AM</div>
-        </div>
-      </div>
+    <div class="thread" id="thread">
+      <div class="thread-header" id="threadHeader">Select a conversation</div>
+      <div class="messages" id="messages"></div>
       <div class="input-bar">
-        <input type="text" placeholder="Type a message...">
-        <button>Send</button>
+        <input type="text" id="msgInput" placeholder="Type a message..." disabled>
+        <button id="sendBtn" disabled>Send</button>
       </div>
     </div>
   </div>
+<script>
+const APPWRITE_ENDPOINT = "https://sfo.cloud.appwrite.io/v1";
+const PROJECT_ID = "6b02c0310015eb4d8908";
+const API_KEY = "standard_736848978be3c81a7a41e08a711185f92c7e894c58e0b2Oe8dd5cb85cf7e6e225d3fadd3097fa0b9b1061dc9be8c3f6bbbb83373d2d374875b0862709d24e45734523485b26be816e9b71650ca9fe47d5bc0bf284fa732e84ff265bf4154f87796ba57e29dc1a1821fe24602c0b2871d6dc0833b4ee4105e83871a425020e62b";
+const DATABASE_ID = "main";
+const CHAT_TABLE = "chat-messages";
+const PROFILES_TABLE = "profiles";
+
+const headers = {
+  "Content-Type": "application/json",
+  "X-Appwrite-Project": PROJECT_ID,
+  "X-Appwrite-Key": API_KEY
+};
+
+let currentUser = null;
+let activeConv = null;
+let pollTimer = null;
+
+function showError(msg) {
+  const b = document.getElementById("errorBanner");
+  b.textContent = msg;
+  b.style.display = "block";
+}
+
+function hideError() {
+  document.getElementById("errorBanner").style.display = "none";
+}
+
+async function appwriteFetch(path, opts) {
+  const res = await fetch(APPWRITE_ENDPOINT + path, Object.assign({ headers: headers }, opts || {}));
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(res.status + " " + t);
+  }
+  return res.json();
+}
+
+async function loadProfiles() {
+  const data = await appwriteFetch("/databases/" + DATABASE_ID + "/tables/" + PROFILES_TABLE + "/rows?limit=100");
+  return data.rows || [];
+}
+
+async function loadMessages(senderId, recipientId, groupId) {
+  let q = "";
+  if (groupId) {
+    q = "queries[]=" + encodeURIComponent(JSON.stringify(["equal(\"group-id\",[" + JSON.stringify(groupId) + "])"]));
+  } else {
+    q = "queries[]=" + encodeURIComponent(JSON.stringify(["equal(\"sender-id\",[" + JSON.stringify(senderId) + "])"])) +
+        "&queries[]=" + encodeURIComponent(JSON.stringify(["equal(\"recipient-id\",[" + JSON.stringify(recipientId) + "])"]));
+  }
+  const data = await appwriteFetch("/databases/" + DATABASE_ID + "/tables/" + CHAT_TABLE + "/rows?" + q + "&limit=100");
+  return data.rows || [];
+}
+
+async function sendMessage(text) {
+  if (!activeConv || !currentUser) return;
+  const body = {
+    "sender-id": currentUser["$id"],
+    "message": text,
+    "created-at": new Date().toISOString()
+  };
+  if (activeConv.groupId) {
+    body["group-id"] = activeConv.groupId;
+  } else {
+    body["recipient-id"] = activeConv.recipientId;
+  }
+  await appwriteFetch("/databases/" + DATABASE_ID + "/tables/" + CHAT_TABLE + "/rows", {
+    method: "POST",
+    body: JSON.stringify(body)
+  });
+}
+
+function renderMessages(rows) {
+  const box = document.getElementById("messages");
+  box.innerHTML = "";
+  rows.sort(function(a, b) { return new Date(a["created-at"]) - new Date(b["created-at"]); });
+  rows.forEach(function(r) {
+    const mine = currentUser && r["sender-id"] === currentUser["$id"];
+    const div = document.createElement("div");
+    div.className = "msg " + (mine ? "me" : "them");
+    const senderName = mine ? "You" : (r["sender-id"] || "Unknown");
+    div.innerHTML = "<div class=\"sender\">" + senderName + "</div>" +
+      r["message"] +
+      "<div class=\"time\">" + new Date(r["created-at"]).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}) + "</div>";
+    box.appendChild(div);
+  });
+  box.scrollTop = box.scrollHeight;
+}
+
+function renderConvs(profiles) {
+  const box = document.getElementById("convItems");
+  box.innerHTML = "";
+  profiles.forEach(function(p) {
+    if (currentUser && p["$id"] === currentUser["$id"]) return;
+    const div = document.createElement("div");
+    div.className = "conv-item";
+    div.innerHTML = "<span class=\"time\">" + (p["badge-status"] === "approved" ? "approved" : "pending") + "</span>" +
+      "<div class=\"name\"><span class=\"dot " + (p["badge-status"] === "approved" ? "" : "offline") + ""></span>" + p["first-name"] + " " + p["last-name"] + "</div>" +
+      "<div class=\"preview\">" + p["company"] + "</div>";
+    div.onclick = function() {
+      document.querySelectorAll(".conv-item").forEach(function(el) { el.classList.remove("active"); });
+      div.classList.add("active");
+      activeConv = { recipientId: p["$id"], name: p["first-name"] + " " + p["last-name"] };
+      document.getElementById("threadHeader").innerHTML = "<span class=\"dot\"></span>" + activeConv.name;
+      document.getElementById("msgInput").disabled = false;
+      document.getElementById("sendBtn").disabled = false;
+      refreshThread();
+    };
+    box.appendChild(div);
+  });
+}
+
+async function refreshThread() {
+  if (!activeConv || !currentUser) return;
+  try {
+    const rows = await loadMessages(currentUser["$id"], activeConv.recipientId, null);
+    renderMessages(rows);
+  } catch (e) {
+    showError("Failed to load messages: " + e.message);
+  }
+}
+
+async function init() {
+  try {
+    hideError();
+    const profiles = await loadProfiles();
+    if (profiles.length === 0) {
+      document.getElementById("driverInfo").textContent = "No profiles found";
+      document.getElementById("convItems").innerHTML = "<div class=\"empty-state\">No drivers yet. Create a profile first.</div>";
+      return;
+    }
+    currentUser = profiles[0];
+    document.getElementById("driverInfo").innerHTML = currentUser["first-name"] + " " + currentUser["last-name"] + "<br>Badge: " + (currentUser["badge-status"] || "pending");
+    renderConvs(profiles);
+    if (pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(refreshThread, 5000);
+  } catch (e) {
+    showError("Failed to load profiles: " + e.message);
+    document.getElementById("driverInfo").textContent = "Error loading";
+  }
+}
+
+document.getElementById("sendBtn").onclick = async function() {
+  const input = document.getElementById("msgInput");
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = "";
+  try {
+    await sendMessage(text);
+    refreshThread();
+  } catch (e) {
+    showError("Send failed: " + e.message);
+  }
+};
+
+document.getElementById("msgInput").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") document.getElementById("sendBtn").click();
+});
+
+init();
+</script>
 </body>
 </html>
