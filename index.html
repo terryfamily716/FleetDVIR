@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FleetDVIR</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f1419; color: #e7e9ea; min-height: 100vh; display: flex; flex-direction: column; }
@@ -21,28 +20,9 @@
   .field { margin-bottom: 16px; }
   .field label { display: block; font-size: 13px; color: #9ca3af; margin-bottom: 6px; font-weight: 600; }
   .field label .req { color: #ef4444; }
-  .field input[type="text"], .field input[type="email"], .field input[type="password"], .field select { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #2d3748; background: #0f1419; color: #e7e9ea; font-size: 15px; }
-  .field input[type="text"]:focus, .field input[type="email"]:focus, .field input[type="password"]:focus, .field select:focus { outline: none; border-color: #3b82f6; }
+  .field input[type="text"], .field select { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #2d3748; background: #0f1419; color: #e7e9ea; font-size: 15px; }
+  .field input[type="text"]:focus, .field select:focus { outline: none; border-color: #3b82f6; }
   .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239ca3af' d='M1.41 0L6 4.58L10.59 0L12 1.41l-6 6l-6-6L1.41 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
-  .selfie-capture { background: #0f1419; border-radius: 12px; border: 1px solid #2d3748; overflow: hidden; }
-  .selfie-video-wrap { position: relative; width: 100%; aspect-ratio: 1; background: #000; display: flex; align-items: center; justify-content: center; }
-  .selfie-video-wrap video { width: 100%; height: 100%; object-fit: cover; }
-  .selfie-face-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; aspect-ratio: 1; border: 3px solid #3b82f6; border-radius: 50%; box-shadow: 0 0 0 9999px rgba(0,0,0,0.55); pointer-events: none; }
-  .selfie-face-guide::after { content: "Align face in circle"; position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%); color: #9ca3af; font-size: 12px; white-space: nowrap; }
-  .selfie-controls { display: flex; gap: 10px; padding: 12px; }
-  .selfie-controls button { flex: 1; padding: 12px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; }
-  .btn-open-cam { background: #3b82f6; color: white; }
-  .btn-open-cam:hover { background: #2563eb; }
-  .btn-upload { background: #1a1f2e; color: #60a5fa; border: 1px solid #2d3748; }
-  .btn-upload:hover { background: #243b55; }
-  .selfie-preview { display: none; padding: 12px; text-align: center; }
-  .selfie-preview img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #3b82f6; }
-  .selfie-preview .preview-actions { display: flex; gap: 10px; margin-top: 12px; }
-  .selfie-preview .preview-actions button { flex: 1; padding: 10px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; }
-  .btn-retake { background: #ef4444; color: white; }
-  .btn-retake:hover { background: #dc2626; }
-  .btn-keep { background: #14532d; color: #4ade80; }
-  .btn-keep:hover { background: #166534; }
   .badge-note { font-size: 12px; color: #6b7280; margin-top: 10px; line-height: 1.5; }
   .badge-note span { color: #f59e0b; }
   .cta { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
@@ -54,7 +34,6 @@
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .msg { display: none; padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; text-align: center; }
   .msg.success { background: #14532d; color: #4ade80; display: block; }
-  .msg.pending { background: #78350f; color: #fcd34d; display: block; }
   .msg.error { background: #7f1d1d; color: #fca5a5; display: block; }
   .overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 24px; }
   .overlay.show { display: flex; }
@@ -68,7 +47,7 @@
   <div class="header">
     <h1>FleetDVIR</h1>
     <div class="tagline">Digital inspection reports for trucking fleets</div>
-    <div class="version">11.21.26 V0.04</div>
+    <div class="version">11.22.26 V0.05</div>
   </div>
   <div class="main">
     <ul class="features">
@@ -84,14 +63,6 @@
     <div class="profile-card">
       <div id="msg" class="msg"></div>
       <div class="field">
-        <label>Email <span class="req">*</span></label>
-        <input type="email" id="email" placeholder="Enter email address">
-      </div>
-      <div class="field">
-        <label>Password <span class="req">*</span></label>
-        <input type="password" id="password" placeholder="Minimum 8 characters" minlength="8">
-      </div>
-      <div class="field">
         <label>First Name <span class="req">*</span></label>
         <input type="text" id="firstName" placeholder="Enter first name">
       </div>
@@ -106,32 +77,11 @@
           <option value="ralphs">Ralph's Grocery</option>
         </select>
       </div>
-      <div class="field">
-        <label>Selfie Photo <span class="req">*</span></label>
-        <div class="selfie-capture" id="selfieCapture">
-          <div class="selfie-video-wrap" id="videoWrap">
-            <video id="selfieVideo" autoplay playsinline muted></video>
-            <div class="selfie-face-guide" id="faceGuide"></div>
-          </div>
-          <div class="selfie-controls">
-            <button class="btn-open-cam" id="openCamBtn" onclick="openCamera()">Open Camera</button>
-            <button class="btn-upload" onclick="document.getElementById('selfieFileInput').click()">Upload Photo</button>
-          </div>
-          <input type="file" id="selfieFileInput" accept="image/*" style="display:none" onchange="handleFileUpload(event)">
-          <div class="selfie-preview" id="selfiePreview">
-            <img id="previewImg" src="" alt="Selfie preview">
-            <div class="preview-actions">
-              <button class="btn-retake" onclick="retakeSelfie()">Retake</button>
-              <button class="btn-keep" onclick="keepSelfie()">Keep Photo</button>
-            </div>
-          </div>
-        </div>
-        <div class="badge-note"><span>&#9888; Badge required:</span> After you submit, your profile goes to pending. Admin reviews your selfie and issues your badge manually. No badge means no DVIR access, chat, or PDF downloads. Your company selection determines which DVIRs you can access.</div>
-      </div>
+      <div class="badge-note"><span>&#9888; Badge required:</span> Your profile is created immediately. The administrator assigns your badge manually from the admin view. No badge means no DVIR access, chat, or PDF downloads. Your company selection determines which DVIRs you can access.</div>
     </div>
 
     <div class="cta">
-      <button class="btn btn-signin" id="submitBtn" onclick="submitProfile()">Submit Profile & Request Badge</button>
+      <button class="btn btn-signin" id="submitBtn" onclick="submitProfile()">Create Profile</button>
       <a class="btn btn-signin" href="dashboard.html">Sign In</a>
       <a class="btn btn-admin" href="dashboard.html">Admin Analytics</a>
     </div>
@@ -139,123 +89,29 @@
 
   <div class="overlay" id="overlay">
     <div class="overlay-box">
-      <h2>Submission Complete</h2>
-      <p id="overlayText">Your submission has been completed. Please wait for the administrator to approve your badge.</p>
+      <h2>Profile Created</h2>
+      <p id="overlayText">Your profile has been created. Message the administrator to get your badge assigned.</p>
       <button class="btn" onclick="closeOverlay()">OK</button>
     </div>
   </div>
 
 <script>
-  var SUPABASE_URL = "https://wrcojseshbjowilmhaou.supabase.co";
-  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndyY29qc2VzaGJqb3dpbG1oYW91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUxNTEwMDAsImV4cCI6MjExMDcyNzAwMH0.pDb_2DxRub_GLQUg-BZKj507LzuDRMWiQaJN3SajB5s";
-  var { createClient } = supabase;
-  var sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  var selfieDataUrl = null;
-  var stream = null;
+  var APPWRITE_ENDPOINT = "https://sfo.cloud.appwrite.io/v1";
+  var APPWRITE_PROJECT = "6b02c0310015eb4d8908";
+  var APPWRITE_KEY = "standard_736848978be3c81a7a41e08a711185f92c7e894c58e0b2Oe8dd5cb85cf7e6e225d3fadd3097fa0b9b1061dc9be8c3f6bbbb83373d2d374875b0862709d24e45734523485b26be816e9b71650ca9fe47d5bc0bf284fa732e84ff265bf4154f87796ba57e29dc1a1821fe24602c0b2871d6dc0833b4ee4105e83871a425020e62b";
+  var DATABASE_ID = "main";
+  var PROFILES_TABLE = "profiles";
 
   function closeOverlay() {
     document.getElementById("overlay").classList.remove("show");
   }
 
-  async function openCamera() {
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
-      var video = document.getElementById("selfieVideo");
-      video.srcObject = stream;
-      document.getElementById("faceGuide").style.display = "block";
-      var openBtn = document.getElementById("openCamBtn");
-      openBtn.textContent = "Capture Photo";
-      openBtn.onclick = capturePhoto;
-    } catch (err) {
-      alert("Camera access denied. Please allow camera permission or upload a photo instead.");
-    }
-  }
-
-  function capturePhoto() {
-    var video = document.getElementById("selfieVideo");
-    var canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    var ctx = canvas.getContext("2d");
-    ctx.drawImage(video, 0, 0);
-    var dataUrl = canvas.toDataURL("image/jpeg", 0.85);
-    if (stream) {
-      stream.getTracks().forEach(function(t) { t.stop(); });
-      stream = null;
-    }
-    video.srcObject = null;
-    document.getElementById("faceGuide").style.display = "none";
-    var openBtn = document.getElementById("openCamBtn");
-    openBtn.textContent = "Open Camera";
-    openBtn.onclick = openCamera;
-    showPreview(dataUrl);
-  }
-
-  function handleFileUpload(event) {
-    var file = event.target.files[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Selfie must be 5 MB or smaller.");
-      event.target.value = "";
-      return;
-    }
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      showPreview(e.target.result);
-    };
-    reader.readAsDataURL(file);
-  }
-
-  function showPreview(dataUrl) {
-    selfieDataUrl = dataUrl;
-    document.getElementById("previewImg").src = dataUrl;
-    document.getElementById("selfiePreview").style.display = "block";
-    document.getElementById("videoWrap").style.display = "none";
-    document.querySelector(".selfie-controls").style.display = "none";
-  }
-
-  function retakeSelfie() {
-    selfieDataUrl = null;
-    document.getElementById("selfiePreview").style.display = "none";
-    document.getElementById("videoWrap").style.display = "flex";
-    document.querySelector(".selfie-controls").style.display = "flex";
-    document.getElementById("selfieFileInput").value = "";
-  }
-
-  function keepSelfie() {
-    document.getElementById("selfiePreview").style.display = "none";
-  }
-
-  function dataURLtoFile(dataUrl, filename) {
-    var arr = dataUrl.split(",");
-    var mime = arr[0].match(/:(.*?);/)[1];
-    var bstr = atob(arr[1]);
-    var n = bstr.length;
-    var u8arr = new Uint8Array(n);
-    for (var i = 0; i < n; i++) {
-      u8arr[i] = bstr.charCodeAt(i);
-    }
-    return new File([u8arr], filename, { type: mime });
-  }
-
   async function submitProfile() {
-    var email = document.getElementById("email").value.trim();
-    var password = document.getElementById("password").value;
     var first = document.getElementById("firstName").value.trim();
     var last = document.getElementById("lastName").value.trim();
     var company = document.getElementById("company").value;
     var msg = document.getElementById("msg");
-    if (!email) {
-      alert("Email is required.");
-      return;
-    }
-    if (password.length < 8) {
-      alert("Password must be at least 8 characters.");
-      return;
-    }
     if (!first || !last) {
-      msg.className = "msg";
-      msg.textContent = "";
       alert("First name and last name are required.");
       return;
     }
@@ -263,51 +119,42 @@
       alert("Please select your company.");
       return;
     }
-    if (!selfieDataUrl) {
-      alert("Selfie photo is required.");
-      return;
-    }
     var btn = document.getElementById("submitBtn");
     btn.disabled = true;
-    btn.textContent = "Submitting...";
+    btn.textContent = "Creating...";
     msg.className = "msg";
     msg.textContent = "";
     try {
-      var { data: authData, error: authError } = await sb.auth.signUp({ email: email, password: password });
-      if (authError) throw authError;
-      var userId = authData.user.id;
-      var selfieFile = dataURLtoFile(selfieDataUrl, "selfie.jpg");
-      var filePath = userId + "/selfie.jpg";
-      var { error: uploadError } = await sb.storage.from("selfies").upload(filePath, selfieFile, { upsert: true });
-      if (uploadError) throw uploadError;
-      var { data: urlData } = sb.storage.from("selfies").getPublicUrl(filePath);
-      var selfieUrl = urlData.publicUrl;
-      var { error: insertError } = await sb.from("profiles").insert([
-        {
-          id: userId,
-          first_name: first,
-          last_name: last,
-          company: company,
-          selfie_url: selfieUrl,
-          badge_status: "pending",
-          role: "driver"
-        }
-      ]);
-      if (insertError) throw insertError;
-      document.getElementById("overlayText").textContent = "Your submission has been completed. Please wait for the administrator to approve your badge.";
+      var res = await fetch(APPWRITE_ENDPOINT + "/tablesdb/" + DATABASE_ID + "/tables/" + PROFILES_TABLE + "/rows", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Appwrite-Project": APPWRITE_PROJECT,
+          "X-Appwrite-Key": APPWRITE_KEY
+        },
+        body: JSON.stringify({
+          "first-name": first,
+          "last-name": last,
+          "company": company,
+          "badge-status": "pending",
+          "role": "driver",
+          "created-at": new Date().toISOString()
+        })
+      });
+      if (!res.ok) {
+        var errBody = await res.text();
+        throw new Error("HTTP " + res.status + ": " + errBody);
+      }
       document.getElementById("overlay").classList.add("show");
-      document.getElementById("email").value = "";
-      document.getElementById("password").value = "";
       document.getElementById("firstName").value = "";
       document.getElementById("lastName").value = "";
       document.getElementById("company").value = "";
-      retakeSelfie();
     } catch (err) {
       msg.className = "msg error";
-      msg.textContent = "Error submitting profile: " + err.message;
+      msg.textContent = "Error creating profile: " + err.message;
     } finally {
       btn.disabled = false;
-      btn.textContent = "Submit Profile & Request Badge";
+      btn.textContent = "Create Profile";
     }
   }
 </script>
