@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>FleetDVIR</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -47,7 +50,7 @@
   <div class="header">
     <h1>FleetDVIR</h1>
     <div class="tagline">Digital inspection reports for trucking fleets</div>
-    <div class="version">11.22.26 V0.08</div>
+    <div class="version">11.24.26 V0.09</div>
   </div>
   <div class="main">
     <ul class="features">
@@ -96,6 +99,18 @@
   </div>
 
 <script>
+  var APP_VERSION = "11.24.26 V0.09";
+  var stored = localStorage.getItem("fleetdvir_version");
+  if (stored !== APP_VERSION) {
+    localStorage.setItem("fleetdvir_version", APP_VERSION);
+    if (stored !== null) {
+      var bust = "?v=" + Date.now();
+      if (location.search.indexOf("v=") === -1) {
+        location.replace(location.protocol + "//" + location.host + location.pathname + bust);
+      }
+    }
+  }
+
   var APPWRITE_ENDPOINT = "https://sfo.cloud.appwrite.io/v1";
   var APPWRITE_PROJECT = "6b02c0310015eb4d8908";
   var APPWRITE_KEY = "standard_234d1812d49c4878535bc373041922cdb1450926a1ae210af496978c2c3d36f30ada378c5e9b82f485774bb93bf36853d79fd9ac2586fc7606d929774ca985376fb99efad7f5da17474620493860f556a521de485d7f060e0d7ba7f83bc9d602323074cd3ae5e183c8dd7b3d9b13dc11bd581b570fa86d8e8d5b3e628c6c11b2";
